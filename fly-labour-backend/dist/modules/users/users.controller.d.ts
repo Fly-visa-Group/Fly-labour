@@ -1,0 +1,66 @@
+import { UsersService } from './users.service';
+export declare class UsersController {
+    private usersService;
+    constructor(usersService: UsersService);
+    updateMe(req: any, dto: {
+        fullName?: string;
+        phone?: string;
+        address?: string;
+    }): Promise<{
+        id: string;
+        email: string;
+        fullName: string;
+        phone: string;
+        avatar: string;
+        address: string;
+        role: import("./user.entity").UserRole;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    findAll(query: {
+        page?: number;
+        limit?: number;
+        search?: string;
+    }): Promise<{
+        data: {
+            id: string;
+            email: string;
+            fullName: string;
+            phone: string;
+            avatar: string;
+            address: string;
+            role: import("./user.entity").UserRole;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    getStats(): Promise<{
+        total: number;
+        active: number;
+        thisMonth: number;
+    }>;
+    findOne(id: string): Promise<{
+        id: string;
+        email: string;
+        fullName: string;
+        phone: string;
+        avatar: string;
+        address: string;
+        role: import("./user.entity").UserRole;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    toggleActive(id: string): Promise<{
+        message: string;
+        isActive: boolean;
+    }>;
+}

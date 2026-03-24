@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: #0A0A0A;
+    color: #F5F5F5;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #141414; }
+  ::-webkit-scrollbar-thumb { background: #F5A623; border-radius: 3px; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-brand-yellow to-brand-orange text-black font-semibold
+           px-6 py-3 rounded-lg hover:opacity-90 transition-all duration-200
+           active:scale-95 shadow-lg shadow-brand-orange/20 cursor-pointer;
+  }
+  .btn-outline {
+    @apply border border-brand-yellow text-brand-yellow font-semibold
+           px-6 py-3 rounded-lg hover:bg-brand-yellow hover:text-black
+           transition-all duration-200 cursor-pointer;
+  }
+  .card-dark {
+    @apply bg-brand-card border border-brand-border rounded-2xl
+           hover:border-brand-yellow/40 transition-all duration-300;
+  }
+  .badge-hot {
+    @apply bg-brand-orange text-white text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide;
+  }
+  .badge-country {
+    @apply bg-brand-yellow/10 text-brand-yellow text-xs font-medium px-2 py-0.5 rounded border border-brand-yellow/20;
+  }
+  .input-dark {
+    @apply bg-brand-card border border-brand-border rounded-xl px-4 py-3 w-full
+           text-white placeholder-brand-muted focus:outline-none
+           focus:border-brand-yellow transition-colors duration-200;
+  }
+  .section-title {
+    @apply font-display text-4xl md:text-5xl text-white tracking-wide;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-yellow to-brand-orange bg-clip-text text-transparent;
+  }
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+  .ticker-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-content {
+    display: inline-block;
+    animation: ticker 40s linear infinite;
+  }
+}
+
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+.animate-fade-up  { animation: fadeUp  0.6s ease forwards; }
+.animate-slide-in { animation: slideIn 0.5s ease forwards; }
+.animate-float    { animation: float   3s ease-in-out infinite; }

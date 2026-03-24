@@ -1,0 +1,105 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import HeroBanner from "@/components/home/HeroBanner";
+import FlashSaleJobs from "@/components/home/FlashSaleJobs";
+import CategoriesSection from "@/components/home/CategoriesSection";
+import WhyChooseUs from "@/components/home/WhyChooseUs";
+import NewsSection from "@/components/home/NewsSection";
+import JobCard from "@/components/jobs/JobCard";
+import { jobsApi } from "@/services/api";
+import type { Job } from "@/types";
+
+export default function HomePage() {
+  const [latestJobs, setLatestJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    jobsApi
+      .getAll({ limit: 6 })
+      .then((r) => setLatestJobs(r.data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <main>
+      <HeroBanner />
+      <FlashSaleJobs />
+      <CategoriesSection />
+
+      {/* Latest jobs */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-brand-yellow text-sm font-semibold uppercase tracking-widest mb-2">
+                Mới đăng gần đây
+              </p>
+              <h2 className="section-title">
+                Việc làm <span className="gradient-text">Mới nhất</span>
+              </h2>
+            </div>
+            <Link
+              to="/jobs"
+              className="btn-outline text-sm px-4 py-2 flex items-center gap-1.5"
+            >
+              Xem tất cả <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-72 bg-brand-card rounded-2xl animate-pulse border border-brand-border"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {latestJobs.map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <WhyChooseUs />
+      <NewsSection />
+
+      {/* CTA */}
+      <section className="py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="card-dark p-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-yellow/5 via-transparent to-brand-orange/5" />
+            <div className="relative">
+              <p className="text-brand-yellow font-semibold text-sm uppercase tracking-widest mb-3">
+                Sẵn sàng thay đổi?
+              </p>
+              <h2 className="font-display text-4xl md:text-5xl text-white tracking-wide mb-4">
+                Bắt đầu hành trình
+                <br />
+                <span className="gradient-text">xuất ngoại của bạn</span>
+              </h2>
+              <p className="text-gray-400 mb-8 max-w-lg mx-auto">
+                Đăng ký ngay hôm nay để nhận tư vấn miễn phí và cập nhật những
+                cơ hội việc làm mới nhất.
+              </p>
+              <div className="flex justify-center gap-4 flex-wrap">
+                <Link to="/register" className="btn-primary px-8 py-3">
+                  Đăng ký miễn phí
+                </Link>
+                <Link to="/contact" className="btn-outline px-8 py-3">
+                  Tư vấn ngay
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}

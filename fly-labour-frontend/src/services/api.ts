@@ -1,0 +1,96 @@
+/// <reference types="vite/client" />
+
+import axios from 'axios'
+
+const BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000'
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+  timeout: 10000,
+})
+
+// Tự động gắn token JWT vào mọi request
+api.interceptors.request.use((config) => {
+  try {
+    const raw = localStorage.getItem('fly-labour-auth')
+    if (raw) {
+      const auth = JSON.parse(raw)
+      if (auth?.state?.token) {
+        config.headers.Authorization = `Bearer ${auth.state.token}`
+      }
+    }
+  } catch {}
+  return config
+})
+
+// Nếu token hết hạn (401) → tự động logout
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('fly-labour-auth')
+      window.location.href = '/login'
+    }
+    return Promise.reject(err)
+  }
+)
+
+// ── Auth ──────────────────────────────────────
+export const authApi = {
+  login:    (email: string, password: string) =>
+    api.post('/auth/login', { email, password }),
+  register: (data: { fullName: string; email: string; phone: string; password: string; address?: string }) =>
+    api.post('/auth/register', data),
+  getMe:    () => api.get('/auth/me'),
+}
+
+// ── Jobs ──────────────────────────────────────
+export const jobsApi = {
+  getAll:     (params?: Record<string, any>) => api.get('/jobs', { params }),
+  getHot:     () => api.get('/jobs/hot'),
+  getOne:     (id: string) => api.get(`/jobs/${id}`),
+  getAllAdmin: (params?: Record<string, any>) => api.get('/jobs/admin/all', { params }),
+  create:     (data: FormData) => api.post('/jobs', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update:     (id: string, data: FormData) => api.patch(`/jobs/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  remove:     (id: string) => api.delete(`/jobs/${id}`),
+  getStats:   () => api.get('/jobs/admin/stats'),
+}
+
+// ── Applications ──────────────────────────────
+export const applicationsApi = {
+  create:       (data: Record<string, any>) => api.post('/applications', data),
+  getAll:       (params?: Record<string, any>) => api.get('/applications', { params }),
+  getOne:       (id: string) => api.get(`/applications/${id}`),
+  updateStatus: (id: string, status: string, adminNote?: string) =>
+    api.patch(`/applications/${id}/status`, { status, adminNote }),
+  getMy:        () => api.get('/applications/my'),
+  getStats:     () => api.get('/applications/stats'),
+}
+
+// ── Categories ────────────────────────────────
+export const categoriesApi = {
+  getAll:     () => api.get('/categories'),
+  getAllAdmin: () => api.get('/categories/admin/all'),
+  create:     (data: Record<string, any>) => api.post('/categories', data),
+  update:     (id: string, data: Record<string, any>) => api.patch(`/categories/${id}`, data),
+  remove:     (id: string) => api.delete(`/categories/${id}`),
+}
+
+// ── Users ─────────────────────────────────────
+export const usersApi = {
+  getAll:       (params?: Record<string, any>) => api.get('/users', { params }),
+  getOne:       (id: string) => api.get(`/users/${id}`),
+  toggleActive: (id: string) => api.patch(`/users/${id}/toggle-active`),
+  getStats:     () => api.get('/users/stats'),
+  updateMe:     (data: Record<string, any>) => api.patch('/users/me', data),
+}
+
+// ── News ──────────────────────────────────────
+export const newsApi = {
+  getAll:     () => api.get('/news'),
+  getAllAdmin: () => api.get('/news/admin/all'),
+  getOne:     (slug: string) => api.get(`/news/${slug}`),
+  create:     (data: Record<string, any>) => api.post('/news', data),
+  update:     (id: string, data: Record<string, any>) => api.patch(`/news/${id}`, data),
+  remove:     (id: string) => api.delete(`/news/${id}`),
+}

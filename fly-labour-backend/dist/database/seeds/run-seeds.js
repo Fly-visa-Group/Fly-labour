@@ -1,0 +1,191 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const typeorm_1 = require("typeorm");
+const bcrypt = require("bcryptjs");
+const dotenv = require("dotenv");
+dotenv.config();
+const user_entity_1 = require("../../modules/users/user.entity");
+const category_entity_1 = require("../../modules/categories/category.entity");
+const job_entity_1 = require("../../modules/jobs/job.entity");
+const news_entity_1 = require("../../modules/news/news.entity");
+const AppDataSource = new typeorm_1.DataSource({
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432'),
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || '123456',
+    database: process.env.DB_NAME || 'fly_labour',
+    entities: [user_entity_1.User, category_entity_1.Category, job_entity_1.Job, news_entity_1.News],
+    synchronize: true,
+});
+async function seed() {
+    await AppDataSource.initialize();
+    console.log('🌱 Bắt đầu seed dữ liệu...');
+    const userRepo = AppDataSource.getRepository(user_entity_1.User);
+    const existAdmin = await userRepo.findOne({ where: { email: 'admin@flylabour.com' } });
+    if (!existAdmin) {
+        await userRepo.save([
+            userRepo.create({
+                fullName: 'Admin Fly Labour',
+                email: 'admin@flylabour.com',
+                phone: '0901234567',
+                password: await bcrypt.hash('Admin@123', 12),
+                role: user_entity_1.UserRole.ADMIN,
+                isActive: true,
+            }),
+            userRepo.create({
+                fullName: 'Nguyễn Văn A',
+                email: 'user@example.com',
+                phone: '0912345678',
+                password: await bcrypt.hash('User@123', 12),
+                role: user_entity_1.UserRole.USER,
+                isActive: true,
+            }),
+        ]);
+        console.log('✅ Tạo 2 users (admin + user demo)');
+    }
+    else {
+        console.log('⏭️  Users đã tồn tại, bỏ qua');
+    }
+    const catRepo = AppDataSource.getRepository(category_entity_1.Category);
+    const catCount = await catRepo.count();
+    if (catCount === 0) {
+        const categories = [
+            { name: 'Nông nghiệp', nameEn: 'Farm', icon: '🌾', description: 'Hái quả, trồng trọt, chăn nuôi', sortOrder: 1 },
+            { name: 'Nail & Spa', nameEn: 'Nail', icon: '💅', description: 'Kỹ thuật viên nail, thẩm mỹ', sortOrder: 2 },
+            { name: 'Kỹ thuật', nameEn: 'Engineering', icon: '⚙️', description: 'Kỹ sư, vận hành máy móc', sortOrder: 3 },
+            { name: 'Xây dựng', nameEn: 'Construction', icon: '🏗️', description: 'Thợ hồ, xây dựng công trình', sortOrder: 4 },
+            { name: 'Nhà hàng', nameEn: 'Hospitality', icon: '🍽️', description: 'Đầu bếp, phục vụ nhà hàng', sortOrder: 5 },
+            { name: 'Y tế', nameEn: 'Healthcare', icon: '🏥', description: 'Y tá, chăm sóc người cao tuổi', sortOrder: 6 },
+            { name: 'Logistics', nameEn: 'Logistics', icon: '🚛', description: 'Lái xe, kho vận, giao hàng', sortOrder: 7 },
+            { name: 'Công nghệ', nameEn: 'IT', icon: '💻', description: 'Lập trình viên, IT support', sortOrder: 8 },
+        ];
+        const savedCats = await catRepo.save(categories.map(c => catRepo.create(c)));
+        console.log(`✅ Tạo ${savedCats.length} danh mục`);
+        const jobRepo = AppDataSource.getRepository(job_entity_1.Job);
+        const farmCat = savedCats[0];
+        const nailCat = savedCats[1];
+        const engCat = savedCats[2];
+        const resCat = savedCats[4];
+        await jobRepo.save([
+            jobRepo.create({
+                title: 'Công nhân Hái Quả Mùa Vụ',
+                company: 'Sunshine Farms',
+                location: 'Queensland',
+                country: job_entity_1.JobCountry.AUSTRALIA,
+                jobType: job_entity_1.JobType.SEASONAL,
+                status: job_entity_1.JobStatus.ACTIVE,
+                salaryMin: 2800, salaryMax: 3500, salaryCurrency: 'AUD',
+                slots: 50, deadline: '2025-06-30',
+                description: 'Tuyển 50 lao động hái quả mùa vụ tại Queensland, Úc. Bao ăn ở, hỗ trợ visa.',
+                requirements: 'Sức khỏe tốt, chịu khó, không yêu cầu kinh nghiệm.',
+                benefits: 'Bao visa. Bao vé máy bay. Bao ăn ở tại farm.',
+                isHot: true, isFeatured: true,
+                image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=75',
+                categoryId: farmCat.id,
+            }),
+            jobRepo.create({
+                title: 'Kỹ thuật viên Nail cao cấp',
+                company: 'Melbourne Nail Studio',
+                location: 'Melbourne',
+                country: job_entity_1.JobCountry.AUSTRALIA,
+                jobType: job_entity_1.JobType.FULL_TIME,
+                status: job_entity_1.JobStatus.ACTIVE,
+                salaryMin: 3200, salaryMax: 4500, salaryCurrency: 'AUD',
+                slots: 10, deadline: '2025-05-30',
+                description: 'Cần tuyển kỹ thuật viên nail có kinh nghiệm làm việc tại studio sang trọng Melbourne.',
+                requirements: 'Kinh nghiệm nail tối thiểu 1 năm. Biết tiếng Anh cơ bản.',
+                benefits: 'Lương + tip. Hỗ trợ tìm nhà ở. Visa sponsored.',
+                isHot: true, isFeatured: true,
+                image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=75',
+                categoryId: nailCat.id,
+            }),
+            jobRepo.create({
+                title: 'Thợ Hàn Công Nghiệp',
+                company: 'BC Steel Works',
+                location: 'British Columbia',
+                country: job_entity_1.JobCountry.CANADA,
+                jobType: job_entity_1.JobType.FULL_TIME,
+                status: job_entity_1.JobStatus.ACTIVE,
+                salaryMin: 3500, salaryMax: 5000, salaryCurrency: 'CAD',
+                slots: 20, deadline: '2025-07-15',
+                description: 'Tuyển thợ hàn có tay nghề làm việc tại nhà máy thép British Columbia, Canada.',
+                requirements: 'Bằng nghề hàn. Kinh nghiệm 2 năm trở lên.',
+                benefits: 'Lương cao. Bao visa. Bảo hiểm y tế đầy đủ.',
+                isHot: true, isFeatured: false,
+                image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=75',
+                categoryId: engCat.id,
+            }),
+            jobRepo.create({
+                title: 'Đầu bếp Việt Nam',
+                company: 'Pho Saigon Restaurant',
+                location: 'Auckland',
+                country: job_entity_1.JobCountry.NEW_ZEALAND,
+                jobType: job_entity_1.JobType.FULL_TIME,
+                status: job_entity_1.JobStatus.ACTIVE,
+                salaryMin: 2900, salaryMax: 3800, salaryCurrency: 'NZD',
+                slots: 5, deadline: '2025-06-01',
+                description: 'Nhà hàng Việt Nam tại Auckland cần tuyển đầu bếp có kinh nghiệm nấu ẩm thực Việt.',
+                requirements: 'Kinh nghiệm nấu ăn 2 năm. Ưu tiên có bằng nghề bếp.',
+                benefits: 'Bao ăn ở. Hỗ trợ visa. Môi trường thân thiện.',
+                isHot: false, isFeatured: false,
+                image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=75',
+                categoryId: resCat.id,
+            }),
+            jobRepo.create({
+                title: 'Lái Xe Container Hạng Nặng',
+                company: 'TransOz Logistics',
+                location: 'Perth',
+                country: job_entity_1.JobCountry.AUSTRALIA,
+                jobType: job_entity_1.JobType.FULL_TIME,
+                status: job_entity_1.JobStatus.ACTIVE,
+                salaryMin: 4000, salaryMax: 5500, salaryCurrency: 'AUD',
+                slots: 15, deadline: '2025-06-15',
+                description: 'Tuyển lái xe container hạng nặng có bằng HR tại Perth, Úc.',
+                requirements: 'Bằng lái HR. Kinh nghiệm 2 năm. Tiếng Anh giao tiếp.',
+                benefits: 'Lương rất cao. Phụ cấp đường dài. Visa sponsored.',
+                isHot: true, isFeatured: false,
+                image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=75',
+                categoryId: savedCats[6].id,
+            }),
+        ]);
+        console.log('✅ Tạo 5 việc làm mẫu');
+    }
+    else {
+        console.log('⏭️  Danh mục & việc làm đã tồn tại, bỏ qua');
+    }
+    const newsRepo = AppDataSource.getRepository(news_entity_1.News);
+    const newsCount = await newsRepo.count();
+    if (newsCount === 0) {
+        await newsRepo.save([
+            newsRepo.create({
+                title: 'Chính sách visa lao động Úc 2025 có gì mới?',
+                slug: 'visa-uc-2025',
+                excerpt: 'Chính phủ Úc vừa công bố một số thay đổi quan trọng trong chính sách visa lao động năm 2025...',
+                content: 'Nội dung chi tiết về chính sách visa Úc 2025...',
+                isPublished: true,
+            }),
+            newsRepo.create({
+                title: 'Top 5 ngành nghề dễ xin việc tại Canada năm 2025',
+                slug: 'nganh-nghe-canada-2025',
+                excerpt: 'Canada đang thiếu hụt lao động trầm trọng trong nhiều ngành. Đây là cơ hội vàng cho lao động Việt Nam...',
+                content: 'Nội dung chi tiết về các ngành nghề tại Canada...',
+                isPublished: true,
+            }),
+            newsRepo.create({
+                title: 'Kinh nghiệm chuẩn bị hồ sơ xin việc tại New Zealand',
+                slug: 'ho-so-new-zealand',
+                excerpt: 'Bộ hồ sơ hoàn chỉnh là chìa khóa để được nhà tuyển dụng New Zealand chú ý...',
+                content: 'Nội dung chi tiết về hồ sơ xin việc NZ...',
+                isPublished: true,
+            }),
+        ]);
+        console.log('✅ Tạo 3 tin tức mẫu');
+    }
+    await AppDataSource.destroy();
+    console.log('\n🎉 Seed hoàn tất!');
+    console.log('📧 Admin: admin@flylabour.com / Admin@123');
+    console.log('📧 User:  user@example.com / User@123');
+}
+seed().catch(err => { console.error('❌ Seed thất bại:', err); process.exit(1); });
+//# sourceMappingURL=run-seeds.js.map
