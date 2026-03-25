@@ -1,21 +1,21 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
-
 COPY package*.json ./
-# Cài đặt toàn bộ dependencies (bao gồm cả nest cli)
-RUN npm install
-
+RUN npm ci
 COPY . .
-# Cấp quyền thực thi cho node_modules (nếu cần) và build
-RUN chmod +x ./node_modules/.bin/nest && npm run build
+RUN npm run build
 
 FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
 
+# Cài production deps
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy built files
 COPY --from=builder /app/dist ./dist
-# Tạo thư mục uploads để sẵn sàng cho Volume
+
+# Tạo thư mục uploads
 RUN mkdir -p uploads/jobs uploads/news
 
 EXPOSE 3000
