@@ -6,7 +6,7 @@ dotenv.config()
 // Import entities
 import { User, UserRole } from '../../modules/users/user.entity'
 import { Category } from '../../modules/categories/category.entity'
-import { Job, JobCountry, JobType, JobStatus } from '../../modules/jobs/job.entity'
+import { Job, JobType, JobStatus } from '../../modules/jobs/job.entity'
 import { News } from '../../modules/news/news.entity'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -95,7 +95,7 @@ async function seed() {
         title: 'Công nhân Hái Quả Mùa Vụ',
         company: 'Sunshine Farms',
         location: 'Queensland',
-        country: JobCountry.AUSTRALIA,
+        country: 'australia',
         jobType: JobType.SEASONAL,
         status: JobStatus.ACTIVE,
         salaryMin: 2800, salaryMax: 3500, salaryCurrency: 'AUD',
@@ -111,7 +111,7 @@ async function seed() {
         title: 'Kỹ thuật viên Nail cao cấp',
         company: 'Melbourne Nail Studio',
         location: 'Melbourne',
-        country: JobCountry.AUSTRALIA,
+        country: 'australia',
         jobType: JobType.FULL_TIME,
         status: JobStatus.ACTIVE,
         salaryMin: 3200, salaryMax: 4500, salaryCurrency: 'AUD',
@@ -127,7 +127,7 @@ async function seed() {
         title: 'Thợ Hàn Công Nghiệp',
         company: 'BC Steel Works',
         location: 'British Columbia',
-        country: JobCountry.CANADA,
+        country: 'canada',
         jobType: JobType.FULL_TIME,
         status: JobStatus.ACTIVE,
         salaryMin: 3500, salaryMax: 5000, salaryCurrency: 'CAD',
@@ -143,7 +143,7 @@ async function seed() {
         title: 'Đầu bếp Việt Nam',
         company: 'Pho Saigon Restaurant',
         location: 'Auckland',
-        country: JobCountry.NEW_ZEALAND,
+        country: 'new_zealand',
         jobType: JobType.FULL_TIME,
         status: JobStatus.ACTIVE,
         salaryMin: 2900, salaryMax: 3800, salaryCurrency: 'NZD',
@@ -159,7 +159,7 @@ async function seed() {
         title: 'Lái Xe Container Hạng Nặng',
         company: 'TransOz Logistics',
         location: 'Perth',
-        country: JobCountry.AUSTRALIA,
+        country: 'australia',
         jobType: JobType.FULL_TIME,
         status: JobStatus.ACTIVE,
         salaryMin: 4000, salaryMax: 5500, salaryCurrency: 'AUD',
