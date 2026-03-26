@@ -19,7 +19,14 @@ export class AuthService {
     if (exists) throw new ConflictException('Email này đã được sử dụng')
 
     const hashed = await bcrypt.hash(dto.password, 12)
-    const user = this.usersRepo.create({ ...dto, password: hashed })
+    
+    // Đã fix lỗi TypeScript: Ép kiểu dto.role sang UserRole
+    const user = this.usersRepo.create({ 
+      ...dto, 
+      password: hashed,
+      role: dto.role as unknown as UserRole 
+    })
+    
     await this.usersRepo.save(user)
 
     const { password, ...result } = user
