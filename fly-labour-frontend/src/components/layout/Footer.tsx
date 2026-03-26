@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Facebook, Youtube } from 'lucide-react'
+import { useT } from '@/hooks/useT'
 
 export default function Footer() {
+  const { t } = useT()
+  const f = t('footer')
+
   return (
     <footer className="bg-brand-card border-t border-brand-border mt-20">
       {/* Top */}
@@ -16,9 +20,7 @@ export default function Footer() {
               FLY <span style={{color:'#F5A623'}}>LABOUR</span>
             </span>
           </div>
-          <p className="text-brand-muted text-sm leading-relaxed">
-            Connecting Vietnamese workers with quality international employment opportunities in Australia, Canada and New Zealand.
-          </p>
+          <p className="text-brand-muted text-sm leading-relaxed">{f.tagline}</p>
           <div className="flex gap-3 mt-5">
             <a href="#" className="w-9 h-9 rounded-lg bg-brand-border flex items-center justify-center text-brand-muted hover:text-brand-yellow hover:bg-brand-yellow/10 transition-colors">
               <Facebook size={16} />
@@ -34,12 +36,9 @@ export default function Footer() {
 
         {/* Jobs Links */}
         <div>
-          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Jobs</h4>
+          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>{f.jobs}</h4>
           <ul className="space-y-2">
-            {[
-              'Jobs in Australia', 'Jobs in Canada', 'Jobs in New Zealand',
-              'Farm & Agriculture', 'Nail & Spa', 'Engineering',
-            ].map(item => (
+            {(f.jobLinks as string[]).map((item: string) => (
               <li key={item}><Link to="/jobs" className="text-brand-muted hover:text-white text-sm transition-colors">{item}</Link></li>
             ))}
           </ul>
@@ -47,11 +46,9 @@ export default function Footer() {
 
         {/* Support Links */}
         <div>
-          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Support</h4>
+          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>{f.support}</h4>
           <ul className="space-y-2">
-            {[
-              'About Us', 'Application Process', 'FAQ', 'News & Blog', 'Contact Us', 'Privacy Policy',
-            ].map(item => (
+            {(f.supportLinks as string[]).map((item: string) => (
               <li key={item}><Link to="/" className="text-brand-muted hover:text-white text-sm transition-colors">{item}</Link></li>
             ))}
           </ul>
@@ -59,7 +56,7 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Contact</h4>
+          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>{f.contact}</h4>
           <ul className="space-y-3">
             <li className="flex items-start gap-2 text-sm text-brand-muted">
               <MapPin size={15} className="mt-0.5 shrink-0" style={{color:'#F5A623'}} />
@@ -75,8 +72,8 @@ export default function Footer() {
             </li>
           </ul>
           <div className="mt-5 p-3 bg-brand-yellow/5 border border-brand-yellow/20 rounded-xl">
-            <p className="text-xs text-brand-yellow font-semibold">Office Hours</p>
-            <p className="text-xs text-brand-muted mt-1">Mon–Fri: 8:00 – 17:30<br/>Sat: 8:00 – 12:00</p>
+            <p className="text-xs text-brand-yellow font-semibold">{f.officeHours}</p>
+            <p className="text-xs text-brand-muted mt-1 whitespace-pre-line">{f.hoursText}</p>
           </div>
         </div>
       </div>
@@ -84,10 +81,10 @@ export default function Footer() {
       {/* Bottom */}
       <div className="border-t border-brand-border py-5 px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-brand-muted">
-          <p>© 2025 Fly Labour. Business No: 0123456789 — Ho Chi Minh City</p>
+          <p>{f.copyright}</p>
           <div className="flex gap-4">
-            <Link to="/" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/" className="hover:text-white transition-colors">{f.privacy}</Link>
+            <Link to="/" className="hover:text-white transition-colors">{f.terms}</Link>
           </div>
         </div>
       </div>

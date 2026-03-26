@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Briefcase, ClipboardList, Eye, TrendingUp, ArrowRight } from 'lucide-react'
 import { employerApi } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
-import { formatDate, COUNTRY_LABELS } from '@/utils/helpers'
+import { formatDate, getCountryLabels } from '@/utils/helpers'
 import type { Job, Application } from '@/types'
 
 export default function EmployerDashboard() {
@@ -80,7 +80,7 @@ export default function EmployerDashboard() {
                 <div key={job.id} className="flex items-center justify-between p-3 bg-brand-dark rounded-xl">
                   <div className="min-w-0">
                     <p className="text-white text-sm font-medium truncate">{job.title}</p>
-                    <p className="text-brand-muted text-xs">{COUNTRY_LABELS[job.country]} · {job.slots || 0} slots</p>
+                    <p className="text-brand-muted text-xs">{getCountryLabels()[job.country]} · {job.slots || 0} slots</p>
                   </div>
                   <span className={`text-xs font-medium capitalize ${STATUS_COLOR[job.status] || 'text-gray-400'}`}>
                     {job.status}

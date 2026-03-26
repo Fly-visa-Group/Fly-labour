@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import BackgroundMusic from "@/components/ui/BackgroundMusic";
+import { useT } from "@/hooks/useT";
 
 // Layouts
 import Header from "@/components/layout/Header";
@@ -44,14 +45,16 @@ function UserLayout({ children }: { children: React.ReactNode }) {
 }
 
 function NewsPage() {
+  const { t } = useT();
+  const n = t('news');
   return (
     <UserLayout>
       <div className="min-h-screen pt-28 px-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="section-title mb-8">
-            News <span className="gradient-text">& Blog</span>
+            {n.title} <span className="gradient-text">{n.titleGradient}</span>
           </h1>
-          <p className="text-brand-muted">News page — coming soon</p>
+          <p className="text-brand-muted">{n.comingSoon}</p>
         </div>
       </div>
     </UserLayout>
@@ -59,21 +62,21 @@ function NewsPage() {
 }
 
 function ContactPage() {
+  const { t } = useT();
+  const c = t('contact');
   return (
     <UserLayout>
       <div className="min-h-screen pt-28 px-6">
         <div className="max-w-3xl mx-auto">
           <h1 className="section-title mb-4">
-            Contact <span className="gradient-text">Us</span>
+            {c.title} <span className="gradient-text">{c.titleGradient}</span>
           </h1>
-          <p className="text-brand-muted mb-8">
-            Our team is ready to help you find the right opportunity abroad.
-          </p>
+          <p className="text-brand-muted mb-8">{c.subtitle}</p>
           <div className="card-dark p-8 space-y-4">
             {[
-              { label: "Full Name", type: "text", placeholder: "John Smith" },
-              { label: "Email", type: "email", placeholder: "email@example.com" },
-              { label: "Phone", type: "tel", placeholder: "+61 400 000 000" },
+              { label: c.name, type: "text", placeholder: c.namePlaceholder },
+              { label: c.email, type: "email", placeholder: "email@example.com" },
+              { label: c.phone, type: "tel", placeholder: c.phonePlaceholder },
             ].map((f) => (
               <div key={f.label}>
                 <label className="text-xs text-brand-muted mb-1.5 block">{f.label}</label>
@@ -81,10 +84,10 @@ function ContactPage() {
               </div>
             ))}
             <div>
-              <label className="text-xs text-brand-muted mb-1.5 block">Message</label>
-              <textarea className="input-dark h-28 resize-none" placeholder="How can we help you?" />
+              <label className="text-xs text-brand-muted mb-1.5 block">{c.message}</label>
+              <textarea className="input-dark h-28 resize-none" placeholder={c.messagePlaceholder} />
             </div>
-            <button className="btn-primary w-full py-3">Send Message</button>
+            <button className="btn-primary w-full py-3">{c.send}</button>
           </div>
         </div>
       </div>
@@ -93,14 +96,16 @@ function ContactPage() {
 }
 
 function NotFound() {
+  const { t } = useT();
+  const nf = t('notFound');
   return (
     <UserLayout>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="font-display text-9xl gradient-text">404</p>
-          <p className="text-white font-semibold text-xl mt-2">Page not found</p>
+          <p className="text-white font-semibold text-xl mt-2">{nf.title}</p>
           <a href="/" className="btn-primary inline-block mt-6 px-6 py-3">
-            Back to Home
+            {nf.back}
           </a>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Plus, Pencil, Trash2, X, CheckCircle, Eye, Upload, Image as ImageIcon } from 'lucide-react'
 import { MOCK_JOBS, MOCK_CATEGORIES } from '@/utils/mockData'
 import type { Category, Job } from '@/types'
-import { COUNTRY_LABELS, JOBTYPE_LABELS, formatSalary, formatDate } from '@/utils/helpers'
+import { getCountryLabels, JOBTYPE_LABELS, formatSalary, formatDate } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 import { categoriesApi, jobsApi, getImageUrl } from '@/services/api'
 
@@ -313,7 +313,7 @@ export default function AdminJobsPage() {
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
                     <span className="badge-country text-xs">
-                      {COUNTRY_LABELS[job.country]}
+                      {getCountryLabels()[job.country]}
                     </span>
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">

@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { Plus, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react'
 import { employerApi, categoriesApi, getImageUrl } from '@/services/api'
-import { COUNTRY_LABELS, COUNTRIES_LIST, JOBTYPE_LABELS } from '@/utils/helpers'
+import { getCountryLabels, getCountriesList, getJobTypeLabel, JOBTYPE_LABELS } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 import type { Job, Category } from '@/types'
 
-const PRESET_COUNTRIES = COUNTRIES_LIST
+const PRESET_COUNTRIES = getCountriesList()
 const BLANK = {
   title: '', description: '', requirements: '', benefits: '',
   company: '', location: '', country: 'australia', countryCustom: '',
@@ -161,7 +161,7 @@ export default function EmployerJobsPage() {
                   </span>
                 </div>
                 <p className="text-brand-muted text-sm mt-0.5">
-                  {COUNTRY_LABELS[job.country]} · {job.slots || 0} slots · {JOBTYPE_LABELS[job.jobType as any]}
+                  {getCountryLabels()[job.country]} · {job.slots || 0} slots · {getJobTypeLabel(job.jobType)}
                 </p>
                 <p className="text-brand-muted text-xs mt-1">{job.viewCount || 0} views</p>
               </div>

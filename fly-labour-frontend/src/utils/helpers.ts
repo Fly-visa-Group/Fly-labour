@@ -1,6 +1,25 @@
 import type { JobType, AppStatus } from '@/types'
+import { useLangStore } from '@/store/langStore'
+import { translations } from '@/i18n/translations'
 
-const COUNTRY_MAP: Record<string, string> = {
+function getLang() {
+  return useLangStore.getState().lang
+}
+
+function getDict() {
+  return translations[getLang()]
+}
+
+// Dynamic country map — respects current language
+export function getCountryLabels(): Record<string, string> {
+  const map = getDict().countryMap
+  return new Proxy(map as Record<string, string>, {
+    get: (target, key: string) => target[key] ?? key,
+  })
+}
+
+// Static country map (English) used for flag emojis & values
+const COUNTRY_MAP_EN: Record<string, string> = {
   australia:   '🇦🇺 Australia',
   canada:      '🇨🇦 Canada',
   new_zealand: '🇳🇿 New Zealand',
@@ -17,12 +36,26 @@ const COUNTRY_MAP: Record<string, string> = {
   uae:         '🇦🇪 UAE',
 }
 
-export const COUNTRY_LABELS: Record<string, string> = new Proxy(COUNTRY_MAP, {
+// COUNTRY_LABELS: legacy compat — static EN version
+export const COUNTRY_LABELS: Record<string, string> = new Proxy(COUNTRY_MAP_EN, {
   get: (target, key: string) => target[key] ?? key,
 })
 
-// Ordered list for dropdowns / navigation
-export const COUNTRIES_LIST = Object.entries(COUNTRY_MAP).map(([value, label]) => ({ value, label }))
+// Ordered list for dropdowns — respects current language
+export function getCountriesList() {
+  const map = getDict().countryMap as Record<string, string>
+  return Object.entries(COUNTRY_MAP_EN).map(([value]) => ({
+    value,
+    label: map[value] ?? COUNTRY_MAP_EN[value],
+  }))
+}
+
+// Legacy static export for compat
+export const COUNTRIES_LIST = Object.entries(COUNTRY_MAP_EN).map(([value, label]) => ({ value, label }))
+
+export function getJobTypeLabel(type: JobType): string {
+  return getDict().jobType[type] ?? type
+}
 
 export const JOBTYPE_LABELS: Record<JobType, string> = {
   full_time: 'Full-time',
@@ -39,11 +72,24 @@ export const APP_STATUS_LABELS: Record<AppStatus, { label: string; color: string
   withdrawn: { label: 'Withdrawn',       color: 'text-gray-400 bg-gray-400/10 border-gray-400/20' },
 }
 
+export function getAppStatusLabel(status: AppStatus): { label: string; color: string } {
+  const s = getDict().appStatus
+  const colors: Record<AppStatus, string> = {
+    pending:   'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
+    reviewing: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+    approved:  'text-green-400 bg-green-400/10 border-green-400/20',
+    rejected:  'text-red-400 bg-red-400/10 border-red-400/20',
+    withdrawn: 'text-gray-400 bg-gray-400/10 border-gray-400/20',
+  }
+  return { label: s[status] ?? status, color: colors[status] }
+}
+
 export function formatSalary(min?: number, max?: number, currency = 'AUD') {
-  if (!min && !max) return 'Negotiable'
-  if (min && max) return `${min.toLocaleString()} - ${max.toLocaleString()} ${currency}/mo`
-  if (min) return `From ${min.toLocaleString()} ${currency}/mo`
-  return `Up to ${max?.toLocaleString()} ${currency}/mo`
+  const s = getDict().salary
+  if (!min && !max) return s.negotiable
+  if (min && max) return `${min.toLocaleString()} - ${max.toLocaleString()} ${currency} ${s.perMonth}`
+  if (min) return `${s.from} ${min.toLocaleString()} ${currency} ${s.perMonth}`
+  return `${s.upTo} ${max?.toLocaleString()} ${currency} ${s.perMonth}`
 }
 
 export function formatDate(dateStr: string) {
@@ -55,11 +101,12 @@ export function formatDate(dateStr: string) {
 export function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
   const days = Math.floor(diff / 86400000)
-  if (days === 0) return 'Today'
-  if (days === 1) return 'Yesterday'
-  if (days < 7) return `${days} days ago`
-  if (days < 30) return `${Math.floor(days / 7)} weeks ago`
-  return `${Math.floor(days / 30)} months ago`
+  const t = getDict().time
+  if (days === 0) return t.today
+  if (days === 1) return t.yesterday
+  if (days < 7) return `${days} ${t.daysAgo}`
+  if (days < 30) return `${Math.floor(days / 7)} ${t.weeksAgo}`
+  return `${Math.floor(days / 30)} ${t.monthsAgo}`
 }
 
 export function clsx(...classes: (string | undefined | false | null)[]) {

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, Briefcase } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
-import { COUNTRIES_LIST } from '@/utils/helpers'
+import { useLangStore } from '@/store/langStore'
+import { useT } from '@/hooks/useT'
+import { getCountriesList } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 
 export default function Header() {
@@ -11,6 +13,8 @@ export default function Header() {
   const [dropdown, setDropdown] = useState<string | null>(null)
   const [userMenu, setUserMenu] = useState(false)
   const { isAuthenticated, user, logout } = useAuthStore()
+  const { toggle } = useLangStore()
+  const { t, lang } = useT()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -22,23 +26,23 @@ export default function Header() {
 
   const handleLogout = () => {
     logout()
-    toast.success('Logged out')
+    toast.success(lang === 'vi' ? 'Đã đăng xuất' : 'Logged out')
     navigate('/')
     setUserMenu(false)
   }
 
   const NAV_ITEMS = [
-    { label: 'Home', href: '/' },
-    { label: 'Jobs', href: '/jobs' },
+    { label: t('nav.home'), href: '/' },
+    { label: t('nav.jobs'), href: '/jobs' },
     {
-      label: 'Countries', href: '#',
-      children: COUNTRIES_LIST.map(({ value, label }) => ({
+      label: t('nav.countries'), href: '#',
+      children: getCountriesList().map(({ value, label }) => ({
         label,
         href: `/jobs?country=${value}`,
       })),
     },
-    { label: 'News', href: '/news' },
-    { label: 'Contact', href: '/contact' },
+    { label: t('nav.news'), href: '/news' },
+    { label: t('nav.contact'), href: '/contact' },
   ]
 
   return (
@@ -116,7 +120,18 @@ export default function Header() {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Language toggle */}
+            <button
+              onClick={toggle}
+              className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-lg border border-brand-border text-xs font-semibold text-gray-300 hover:border-brand-yellow/50 hover:text-brand-yellow transition-colors"
+              title="Switch language"
+            >
+              <span>{lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
+              <span className="text-gray-500">|</span>
+              <span className="text-gray-500">{lang === 'vi' ? 'EN' : 'VI'}</span>
+            </button>
+
             {isAuthenticated && user ? (
               <div className="relative">
                 <button
@@ -142,7 +157,7 @@ export default function Header() {
                         className="flex items-center gap-2 px-4 py-3 text-sm text-brand-yellow hover:bg-brand-yellow/10 transition-colors"
                         onClick={() => setUserMenu(false)}
                       >
-                        <LayoutDashboard size={16} /> Admin Dashboard
+                        <LayoutDashboard size={16} /> {t('nav.adminDashboard')}
                       </Link>
                     )}
                     {user.role === "employer" && (
@@ -151,7 +166,7 @@ export default function Header() {
                         className="flex items-center gap-2 px-4 py-3 text-sm text-brand-yellow hover:bg-brand-yellow/10 transition-colors"
                         onClick={() => setUserMenu(false)}
                       >
-                        <Briefcase size={16} /> Employer Dashboard
+                        <Briefcase size={16} /> {t('nav.employerDashboard')}
                       </Link>
                     )}
                     <Link
@@ -159,21 +174,21 @@ export default function Header() {
                       className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
                       onClick={() => setUserMenu(false)}
                     >
-                      <User size={16} /> My Profile
+                      <User size={16} /> {t('nav.myProfile')}
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                     >
-                      <LogOut size={16} /> Sign Out
+                      <LogOut size={16} /> {t('nav.signOut')}
                     </button>
                   </div>
                 )}
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link to="/login" className="btn-outline text-sm px-4 py-2">Sign In</Link>
-                <Link to="/register" className="btn-primary text-sm px-4 py-2">Register</Link>
+                <Link to="/login" className="btn-outline text-sm px-4 py-2">{t('nav.signIn')}</Link>
+                <Link to="/register" className="btn-primary text-sm px-4 py-2">{t('nav.register')}</Link>
               </div>
             )}
 
@@ -218,13 +233,23 @@ export default function Header() {
               </Link>
             )
           ))}
+          {/* Mobile language toggle */}
+          <div className="px-6 py-3 border-b border-brand-border/50">
+            <button
+              onClick={toggle}
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-brand-yellow transition-colors"
+            >
+              <span>{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
+              <span>{lang === 'vi' ? 'Tiếng Việt → English' : 'English → Tiếng Việt'}</span>
+            </button>
+          </div>
           {!isAuthenticated && (
             <div className="flex gap-3 p-4">
               <Link to="/login" className="flex-1 btn-outline text-center text-sm py-2" onClick={() => setMobileOpen(false)}>
-                Sign In
+                {t('nav.signIn')}
               </Link>
               <Link to="/register" className="flex-1 btn-primary text-center text-sm py-2" onClick={() => setMobileOpen(false)}>
-                Register
+                {t('nav.register')}
               </Link>
             </div>
           )}
