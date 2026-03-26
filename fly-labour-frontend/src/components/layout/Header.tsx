@@ -1,23 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react'
+import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, Briefcase } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
+import { COUNTRIES_LIST } from '@/utils/helpers'
 import toast from 'react-hot-toast'
-
-const NAV_ITEMS = [
-  { label: 'Trang chủ', href: '/' },
-  { label: 'Việc làm', href: '/jobs' },
-  {
-    label: 'Quốc gia', href: '#',
-    children: [
-      { label: '🇦🇺 Úc (Australia)', href: '/jobs?country=australia' },
-      { label: '🇨🇦 Canada', href: '/jobs?country=canada' },
-      { label: '🇳🇿 New Zealand', href: '/jobs?country=new_zealand' },
-    ],
-  },
-  { label: 'Tin tức', href: '/news' },
-  { label: 'Liên hệ', href: '/contact' },
-]
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -36,10 +22,24 @@ export default function Header() {
 
   const handleLogout = () => {
     logout()
-    toast.success('Đã đăng xuất')
+    toast.success('Logged out')
     navigate('/')
     setUserMenu(false)
   }
+
+  const NAV_ITEMS = [
+    { label: 'Home', href: '/' },
+    { label: 'Jobs', href: '/jobs' },
+    {
+      label: 'Countries', href: '#',
+      children: COUNTRIES_LIST.map(({ value, label }) => ({
+        label,
+        href: `/jobs?country=${value}`,
+      })),
+    },
+    { label: 'News', href: '/news' },
+    { label: 'Contact', href: '/contact' },
+  ]
 
   return (
     <header
@@ -55,25 +55,13 @@ export default function Header() {
           <Link to="/" className="flex items-center gap-2 group">
             <div
               className="w-9 h-9 bg-gold-gradient rounded-lg flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-300"
-              style={{
-                background: "linear-gradient(135deg, #F5A623, #EA580C)",
-              }}
+              style={{ background: "linear-gradient(135deg, #F5A623, #EA580C)" }}
             >
-              <span className="text-black font-display text-lg font-black">
-                FL
-              </span>
+              <span className="text-black font-display text-lg font-black">FL</span>
             </div>
             <div>
-              <span className="font-display text-xl text-white tracking-wider">
-                FLY
-              </span>
-              <span
-                className="font-display text-xl tracking-wider"
-                style={{ color: "#F5A623" }}
-              >
-                {" "}
-                LABOUR
-              </span>
+              <span className="font-display text-xl text-white tracking-wider">FLY</span>
+              <span className="font-display text-xl tracking-wider" style={{ color: "#F5A623" }}> LABOUR</span>
             </div>
           </Link>
 
@@ -96,12 +84,12 @@ export default function Header() {
                   </button>
                   {dropdown === item.label && (
                     <div className="absolute top-full left-0 w-52 pt-2">
-                      <div className="bg-brand-card border border-brand-border rounded-xl shadow-2xl overflow-hidden">
+                      <div className="bg-brand-card border border-brand-border rounded-xl shadow-2xl overflow-hidden max-h-80 overflow-y-auto">
                         {item.children.map((child) => (
                           <Link
                             key={child.href}
                             to={child.href}
-                            className="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-brand-yellow/10 transition-colors"
+                            className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-brand-yellow/10 transition-colors"
                             onClick={() => setDropdown(null)}
                           >
                             {child.label}
@@ -137,9 +125,7 @@ export default function Header() {
                 >
                   <div
                     className="w-7 h-7 rounded-lg bg-gold-gradient flex items-center justify-center text-black font-bold text-xs"
-                    style={{
-                      background: "linear-gradient(135deg,#F5A623,#EA580C)",
-                    }}
+                    style={{ background: "linear-gradient(135deg,#F5A623,#EA580C)" }}
                   >
                     {user.fullName.charAt(0)}
                   </div>
@@ -149,14 +135,23 @@ export default function Header() {
                   <ChevronDown size={14} className="text-gray-400" />
                 </button>
                 {userMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-52 bg-brand-card border border-brand-border rounded-xl shadow-2xl overflow-hidden">
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-brand-card border border-brand-border rounded-xl shadow-2xl overflow-hidden">
                     {user.role === "admin" && (
                       <Link
                         to="/admin"
                         className="flex items-center gap-2 px-4 py-3 text-sm text-brand-yellow hover:bg-brand-yellow/10 transition-colors"
                         onClick={() => setUserMenu(false)}
                       >
-                        <LayoutDashboard size={16} /> Dashboard Admin
+                        <LayoutDashboard size={16} /> Admin Dashboard
+                      </Link>
+                    )}
+                    {user.role === "employer" && (
+                      <Link
+                        to="/employer"
+                        className="flex items-center gap-2 px-4 py-3 text-sm text-brand-yellow hover:bg-brand-yellow/10 transition-colors"
+                        onClick={() => setUserMenu(false)}
+                      >
+                        <Briefcase size={16} /> Employer Dashboard
                       </Link>
                     )}
                     <Link
@@ -164,25 +159,21 @@ export default function Header() {
                       className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
                       onClick={() => setUserMenu(false)}
                     >
-                      <User size={16} /> Hồ sơ của tôi
+                      <User size={16} /> My Profile
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                     >
-                      <LogOut size={16} /> Đăng xuất
+                      <LogOut size={16} /> Sign Out
                     </button>
                   </div>
                 )}
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link to="/login" className="btn-outline text-sm px-4 py-2">
-                  Đăng nhập
-                </Link>
-                <Link to="/register" className="btn-primary text-sm px-4 py-2">
-                  Đăng ký
-                </Link>
+                <Link to="/login" className="btn-outline text-sm px-4 py-2">Sign In</Link>
+                <Link to="/register" className="btn-primary text-sm px-4 py-2">Register</Link>
               </div>
             )}
 
@@ -200,35 +191,45 @@ export default function Header() {
       {mobileOpen && (
         <div className="md:hidden bg-brand-card border-t border-brand-border">
           {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className="block px-6 py-3 text-gray-300 hover:text-brand-yellow hover:bg-white/5 transition-colors border-b border-brand-border/50"
-              onClick={() => setMobileOpen(false)}
-            >
-              {item.label}
-            </Link>
+            item.children ? (
+              <div key={item.label}>
+                <div className="block px-6 py-3 text-brand-yellow text-sm font-semibold border-b border-brand-border/50">
+                  {item.label}
+                </div>
+                {item.children.map((child) => (
+                  <Link
+                    key={child.href}
+                    to={child.href}
+                    className="block px-8 py-2.5 text-gray-400 hover:text-brand-yellow hover:bg-white/5 transition-colors border-b border-brand-border/20 text-sm"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {child.label}
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <Link
+                key={item.href}
+                to={item.href}
+                className="block px-6 py-3 text-gray-300 hover:text-brand-yellow hover:bg-white/5 transition-colors border-b border-brand-border/50"
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
+            )
           ))}
           {!isAuthenticated && (
             <div className="flex gap-3 p-4">
-              <Link
-                to="/login"
-                className="flex-1 btn-outline text-center text-sm py-2"
-                onClick={() => setMobileOpen(false)}
-              >
-                Đăng nhập
+              <Link to="/login" className="flex-1 btn-outline text-center text-sm py-2" onClick={() => setMobileOpen(false)}>
+                Sign In
               </Link>
-              <Link
-                to="/register"
-                className="flex-1 btn-primary text-center text-sm py-2"
-                onClick={() => setMobileOpen(false)}
-              >
-                Đăng ký
+              <Link to="/register" className="flex-1 btn-primary text-center text-sm py-2" onClick={() => setMobileOpen(false)}>
+                Register
               </Link>
             </div>
           )}
         </div>
       )}
     </header>
-  );
+  )
 }

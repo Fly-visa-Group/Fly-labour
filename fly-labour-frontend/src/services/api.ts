@@ -87,6 +87,15 @@ export const usersApi = {
   remove:       (id: string) => api.delete(`/users/${id}`),
 }
 
+// ── Employer ──────────────────────────────────
+export const employerApi = {
+  getMyJobs:       (params?: Record<string, any>) => api.get('/jobs/employer/my', { params }),
+  createJob:       (data: FormData) => api.post('/jobs/employer', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  updateJob:       (id: string, data: FormData) => api.patch(`/jobs/employer/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  deleteJob:       (id: string) => api.delete(`/jobs/employer/${id}`),
+  getApplications: () => api.get('/applications/employer'),
+}
+
 // ── News ──────────────────────────────────────
 export const newsApi = {
   getAll:     () => api.get('/news'),

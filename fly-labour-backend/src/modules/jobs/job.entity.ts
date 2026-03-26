@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { Category } from '../categories/category.entity'
+import { User } from '../users/user.entity'
 
 export enum JobType { FULL_TIME = 'full_time', PART_TIME = 'part_time', CONTRACT = 'contract', SEASONAL = 'seasonal' }
 export enum JobStatus { ACTIVE = 'active', PAUSED = 'paused', CLOSED = 'closed', DRAFT = 'draft' }
@@ -69,6 +70,14 @@ export class Job {
 
   @Column({ nullable: true })
   categoryId: string
+
+  // Employer who created this job (null = created by admin)
+  @ManyToOne(() => User, { nullable: true, eager: false })
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User
+
+  @Column({ nullable: true })
+  createdById: string
 
   @CreateDateColumn()
   createdAt: Date

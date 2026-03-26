@@ -17,7 +17,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-brand-muted text-sm leading-relaxed">
-            Cầu nối uy tín đưa lao động Việt Nam đến cơ hội việc làm chất lượng tại Úc, Canada và New Zealand.
+            Connecting Vietnamese workers with quality international employment opportunities in Australia, Canada and New Zealand.
           </p>
           <div className="flex gap-3 mt-5">
             <a href="#" className="w-9 h-9 rounded-lg bg-brand-border flex items-center justify-center text-brand-muted hover:text-brand-yellow hover:bg-brand-yellow/10 transition-colors">
@@ -32,20 +32,26 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Links */}
+        {/* Jobs Links */}
         <div>
-          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Việc làm</h4>
+          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Jobs</h4>
           <ul className="space-y-2">
-            {['Việc làm tại Úc', 'Việc làm tại Canada', 'Việc làm New Zealand', 'Farm Nông nghiệp', 'Nail & Spa', 'Kỹ thuật'].map(item => (
+            {[
+              'Jobs in Australia', 'Jobs in Canada', 'Jobs in New Zealand',
+              'Farm & Agriculture', 'Nail & Spa', 'Engineering',
+            ].map(item => (
               <li key={item}><Link to="/jobs" className="text-brand-muted hover:text-white text-sm transition-colors">{item}</Link></li>
             ))}
           </ul>
         </div>
 
+        {/* Support Links */}
         <div>
-          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Hỗ trợ</h4>
+          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Support</h4>
           <ul className="space-y-2">
-            {['Về chúng tôi', 'Quy trình đăng ký', 'Câu hỏi thường gặp', 'Tin tức & Blog', 'Liên hệ tư vấn', 'Chính sách BH'].map(item => (
+            {[
+              'About Us', 'Application Process', 'FAQ', 'News & Blog', 'Contact Us', 'Privacy Policy',
+            ].map(item => (
               <li key={item}><Link to="/" className="text-brand-muted hover:text-white text-sm transition-colors">{item}</Link></li>
             ))}
           </ul>
@@ -53,11 +59,11 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Liên hệ</h4>
+          <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-widest" style={{color:'#F5A623'}}>Contact</h4>
           <ul className="space-y-3">
             <li className="flex items-start gap-2 text-sm text-brand-muted">
               <MapPin size={15} className="mt-0.5 shrink-0" style={{color:'#F5A623'}} />
-              <span>123 Nguyễn Văn Linh, Q.7, TP.HCM</span>
+              <span>123 Nguyen Van Linh, District 7, Ho Chi Minh City</span>
             </li>
             <li className="flex items-center gap-2 text-sm text-brand-muted">
               <Phone size={15} style={{color:'#F5A623'}} />
@@ -69,8 +75,8 @@ export default function Footer() {
             </li>
           </ul>
           <div className="mt-5 p-3 bg-brand-yellow/5 border border-brand-yellow/20 rounded-xl">
-            <p className="text-xs text-brand-yellow font-semibold">Giờ tư vấn</p>
-            <p className="text-xs text-brand-muted mt-1">T2-T6: 8:00 - 17:30<br/>T7: 8:00 - 12:00</p>
+            <p className="text-xs text-brand-yellow font-semibold">Office Hours</p>
+            <p className="text-xs text-brand-muted mt-1">Mon–Fri: 8:00 – 17:30<br/>Sat: 8:00 – 12:00</p>
           </div>
         </div>
       </div>
@@ -78,10 +84,10 @@ export default function Footer() {
       {/* Bottom */}
       <div className="border-t border-brand-border py-5 px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-brand-muted">
-          <p>© 2025 Fly Labour. Mã số DN: 0123456789 — TP.HCM</p>
+          <p>© 2025 Fly Labour. Business No: 0123456789 — Ho Chi Minh City</p>
           <div className="flex gap-4">
-            <Link to="/" className="hover:text-white transition-colors">Chính sách bảo mật</Link>
-            <Link to="/" className="hover:text-white transition-colors">Điều khoản sử dụng</Link>
+            <Link to="/" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

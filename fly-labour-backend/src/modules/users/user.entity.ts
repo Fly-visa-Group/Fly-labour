@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { Exclude } from 'class-transformer'
 
-export enum UserRole { ADMIN = 'admin', USER = 'user' }
+export enum UserRole { ADMIN = 'admin', USER = 'user', EMPLOYER = 'employer' }
 
 @Entity('users')
 export class User {
@@ -32,6 +32,16 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean
+
+  // Employer-specific fields
+  @Column({ nullable: true })
+  companyName: string
+
+  @Column({ type: 'text', nullable: true })
+  companyDescription: string
+
+  @Column({ nullable: true })
+  website: string
 
   @CreateDateColumn()
   createdAt: Date

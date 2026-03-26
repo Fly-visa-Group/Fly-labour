@@ -1,8 +1,8 @@
-export type Country = string // cho phép quốc gia tự do (không chỉ enum cứng)
+export type Country = string
 export type JobType = 'full_time' | 'part_time' | 'contract' | 'seasonal'
 export type JobStatus = 'active' | 'paused' | 'closed' | 'draft'
 export type AppStatus = 'pending' | 'reviewing' | 'approved' | 'rejected' | 'withdrawn'
-export type UserRole = 'admin' | 'user'
+export type UserRole = 'admin' | 'user' | 'employer'
 
 export interface Category {
   id: string
@@ -38,6 +38,7 @@ export interface Job {
   viewCount: number
   category?: Category
   categoryId?: string
+  createdById?: string
   _count?: { applications: number }
   createdAt: string
   updatedAt: string
@@ -52,6 +53,9 @@ export interface User {
   address?: string
   role: UserRole
   isActive: boolean
+  companyName?: string
+  companyDescription?: string
+  website?: string
   createdAt: string
 }
 
@@ -109,6 +113,9 @@ export interface RegisterData {
   phone: string
   password: string
   address?: string
+  role?: 'user' | 'employer'
+  companyName?: string
+  website?: string
 }
 
 export interface DashboardStats {

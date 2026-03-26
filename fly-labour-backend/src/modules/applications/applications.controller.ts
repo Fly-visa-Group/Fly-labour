@@ -3,6 +3,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger'
 import { ApplicationsService, CreateApplicationDto, UpdateApplicationStatusDto } from './applications.service'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { AdminGuard } from '../../common/guards/admin.guard'
+import { EmployerGuard } from '../../common/guards/employer.guard'
 
 @ApiTags('📋 Đơn ứng tuyển')
 @Controller('applications')
@@ -18,9 +19,17 @@ export class ApplicationsController {
   @Get('my')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'Đơn ứng tuyển của tôi' })
+  @ApiOperation({ summary: 'My applications' })
   myApplications(@Request() req: any) {
     return this.appsService.findByUser(req.user.id)
+  }
+
+  @Get('employer')
+  @UseGuards(JwtAuthGuard, EmployerGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: '[Employer] Applications received for my job listings' })
+  getEmployerApplications(@Request() req: any) {
+    return this.appsService.findByEmployer(req.user.id)
   }
 
   @Get()

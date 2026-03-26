@@ -80,4 +80,13 @@ export class ApplicationsService {
       order: { createdAt: 'DESC' },
     })
   }
+
+  async findByEmployer(employerId: string) {
+    return this.appsRepo.createQueryBuilder('app')
+      .leftJoinAndSelect('app.job', 'job')
+      .leftJoinAndSelect('app.user', 'user')
+      .where('job.createdById = :employerId', { employerId })
+      .orderBy('app.createdAt', 'DESC')
+      .getMany()
+  }
 }

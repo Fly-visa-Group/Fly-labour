@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job, JobStatus } from './job.entity';
@@ -46,7 +46,7 @@ export class JobsService {
     });
   }
 
-  // Admin: lấy tất cả kể cả draft/paused
+  // Admin: all jobs including draft/paused
   async findAllAdmin(query: QueryJobDto) {
     const { page = 1, limit = 20, search } = query;
     const qb = this.jobsRepo.createQueryBuilder('job')
@@ -63,15 +63,13 @@ export class JobsService {
 
   async findOne(id: string) {
     const job = await this.jobsRepo.findOne({ where: { id }, relations: ['category'] });
-    if (!job) throw new NotFoundException('Không tìm thấy bài đăng này');
-    // Tăng lượt xem
+    if (!job) throw new NotFoundException('Job not found');
     await this.jobsRepo.increment({ id }, 'viewCount', 1);
     return job;
   }
 
   async create(dto: CreateJobDto, file?: Express.Multer.File) {
     const job = this.jobsRepo.create(dto);
-    // Đã thêm await ở đây
     if (file) job.image = await this.saveFile(file);
     return this.jobsRepo.save(job);
   }
@@ -79,7 +77,6 @@ export class JobsService {
   async update(id: string, dto: UpdateJobDto, file?: Express.Multer.File) {
     const job = await this.findOneRaw(id);
     Object.assign(job, dto);
-    // Đã thêm await ở đây
     if (file) job.image = await this.saveFile(file);
     return this.jobsRepo.save(job);
   }
@@ -87,7 +84,45 @@ export class JobsService {
   async remove(id: string) {
     const job = await this.findOneRaw(id);
     await this.jobsRepo.remove(job);
-    return { message: 'Đã xóa bài đăng thành công' };
+    return { message: 'Job deleted successfully' };
+  }
+
+  // ── Employer methods ──────────────────────────────────
+  async findByEmployer(employerId: string, query: QueryJobDto) {
+    const { page = 1, limit = 20 } = query;
+    const qb = this.jobsRepo.createQueryBuilder('job')
+      .leftJoinAndSelect('job.category', 'category')
+      .where('job.createdById = :employerId', { employerId })
+      .orderBy('job.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+    const [data, total] = await qb.getManyAndCount();
+    return { data, meta: { total, page: +page, limit: +limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async createByEmployer(dto: CreateJobDto, employerId: string, file?: Express.Multer.File) {
+    const job = this.jobsRepo.create({ ...dto, createdById: employerId });
+    if (file) job.image = await this.saveFile(file);
+    return this.jobsRepo.save(job);
+  }
+
+  async updateByEmployer(id: string, employerId: string, dto: UpdateJobDto, file?: Express.Multer.File) {
+    const job = await this.findOneRaw(id);
+    if (job.createdById !== employerId) {
+      throw new ForbiddenException('You can only edit your own job listings');
+    }
+    Object.assign(job, dto);
+    if (file) job.image = await this.saveFile(file);
+    return this.jobsRepo.save(job);
+  }
+
+  async deleteByEmployer(id: string, employerId: string) {
+    const job = await this.findOneRaw(id);
+    if (job.createdById !== employerId) {
+      throw new ForbiddenException('You can only delete your own job listings');
+    }
+    await this.jobsRepo.remove(job);
+    return { message: 'Job deleted successfully' };
   }
 
   async getStats() {
@@ -112,24 +147,18 @@ export class JobsService {
 
   private async findOneRaw(id: string) {
     const job = await this.jobsRepo.findOne({ where: { id } });
-    if (!job) throw new NotFoundException('Không tìm thấy bài đăng');
+    if (!job) throw new NotFoundException('Job not found');
     return job;
   }
 
   private async saveFile(file: Express.Multer.File): Promise<string> {
-    // Lưu thẳng vào ổ cứng Volume của Railway
     const uploadDir = join(process.cwd(), 'uploads', 'jobs');
-    
     if (!existsSync(uploadDir)) {
       mkdirSync(uploadDir, { recursive: true });
     }
-
-    // Đổi tên file để tránh trùng lặp và lỗi khoảng trắng
     const filename = `${Date.now()}-${file.originalname.replace(/\s/g, '-')}`;
     const filePath = join(uploadDir, filename);
-    
     writeFileSync(filePath, file.buffer);
-    
     return `/uploads/jobs/${filename}`;
   }
 }

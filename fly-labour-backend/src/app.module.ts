@@ -7,6 +7,7 @@ import { JobsModule } from './modules/jobs/jobs.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { CategoriesModule } from './modules/categories/categories.module'
 import { NewsModule } from './modules/news/news.module'
+import { join } from 'path/win32'
 
 @Module({
   imports: [
@@ -16,36 +17,38 @@ import { NewsModule } from './modules/news/news.module'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {
-        const databaseUrl = cfg.get('DATABASE_URL')
+        const databaseUrl = cfg.get<string>('DATABASE_URL');
+        const nodeEnv = cfg.get<string>('NODE_ENV', 'development');
 
         if (databaseUrl) {
-          // Railway internal (.railway.internal) không cần SSL; external URL mới cần
-          const isInternal = databaseUrl.includes('.railway.internal')
           return {
             type: 'postgres',
             url: databaseUrl,
-            ssl: isInternal ? false : { rejectUnauthorized: false },
-            entities: [__dirname + '/**/*.entity{.ts,.js}'],
-            synchronize: true,
-            logging: false,
+            // Railway: Cần SSL cho external URL, nội bộ (.internal) đôi khi cũng cần tùy version
+            ssl: { rejectUnauthorized: false },
+            entities: [join(__dirname, '**', '*.entity{.ts,.js}')],
+            // Bật true một lần để tự tạo bảng cho database mới xóa
+            synchronize: true, 
+            logging: nodeEnv === 'development',
             extra: {
-              max: 5,                        // giới hạn pool connection
-              connectionTimeoutMillis: 10000, // fail nhanh thay vì hang vô tận
+              max: 10,
+              connectionTimeoutMillis: 10000,
             },
-          }
+          };
         }
 
+        // Cấu hình fallback cho Local (Docker/Localhost)
         return {
           type: 'postgres',
-          host: cfg.get('DB_HOST', 'localhost'),
+          host: cfg.get<string>('DB_HOST', 'localhost'),
           port: cfg.get<number>('DB_PORT', 5432),
-          username: cfg.get('DB_USERNAME', 'postgres'),
-          password: cfg.get('DB_PASSWORD', '123456'),
-          database: cfg.get('DB_NAME', 'fly_labour'),
-          entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: cfg.get('NODE_ENV') !== 'production',
-          logging: cfg.get('NODE_ENV') === 'development',
-        }
+          username: cfg.get<string>('DB_USERNAME', 'postgres'),
+          password: cfg.get<string>('DB_PASSWORD', '123456'),
+          database: cfg.get<string>('DB_NAME', 'fly_labour'),
+          entities: [join(__dirname, '**', '*.entity{.ts,.js}')],
+          synchronize: true,
+          logging: true,
+        };
       },
     }),
 

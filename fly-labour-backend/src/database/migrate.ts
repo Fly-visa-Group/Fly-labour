@@ -46,6 +46,50 @@ async function migrate() {
     $$;
   `)
 
+  // Add employer role to users_role_enum (idempotent)
+  await ds.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'users_role_enum') THEN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_enum
+          INNER JOIN pg_type ON pg_enum.enumtypid = pg_type.oid
+          WHERE pg_type.typname = 'users_role_enum' AND pg_enum.enumlabel = 'employer'
+        ) THEN
+          ALTER TYPE users_role_enum ADD VALUE 'employer';
+          RAISE NOTICE 'Added employer to users_role_enum';
+        ELSE
+          RAISE NOTICE 'employer already exists in users_role_enum';
+        END IF;
+      END IF;
+    END
+    $$;
+  `)
+
+  // Add employer company fields to users table (idempotent)
+  await ds.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users') THEN
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS "companyName" varchar;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS "companyDescription" text;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS website varchar;
+      END IF;
+    END
+    $$;
+  `)
+
+  // Add createdById to jobs table (links job to employer who created it)
+  await ds.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'jobs') THEN
+        ALTER TABLE jobs ADD COLUMN IF NOT EXISTS "createdById" varchar;
+      END IF;
+    END
+    $$;
+  `)
+
   await ds.destroy()
   console.log('✅ Migration hoàn tất!')
 }
