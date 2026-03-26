@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useEffect } from "react";
 import BackgroundMusic from "@/components/ui/BackgroundMusic";
 
 // Layouts
@@ -26,6 +25,12 @@ import AdminCategoriesPage from "@/pages/admin/AdminCategoriesPage";
 import AdminNewsPage from "@/pages/admin/AdminNewsPage";
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 
+// Employer pages
+import EmployerLayout from "@/pages/employer/EmployerLayout";
+import EmployerDashboard from "@/pages/employer/EmployerDashboard";
+import EmployerJobsPage from "@/pages/employer/EmployerJobsPage";
+import EmployerApplicationsPage from "@/pages/employer/EmployerApplicationsPage";
+
 function UserLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-brand-dark">
@@ -44,9 +49,9 @@ function NewsPage() {
       <div className="min-h-screen pt-28 px-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="section-title mb-8">
-            Tin tức <span className="gradient-text">& Blog</span>
+            News <span className="gradient-text">& Blog</span>
           </h1>
-          <p className="text-brand-muted">Trang tin tức — đang phát triển</p>
+          <p className="text-brand-muted">News page — coming soon</p>
         </div>
       </div>
     </UserLayout>
@@ -59,48 +64,27 @@ function ContactPage() {
       <div className="min-h-screen pt-28 px-6">
         <div className="max-w-3xl mx-auto">
           <h1 className="section-title mb-4">
-            Liên hệ <span className="gradient-text">Tư vấn</span>
+            Contact <span className="gradient-text">Us</span>
           </h1>
           <p className="text-brand-muted mb-8">
-            Đội ngũ tư vấn Fly Labour luôn sẵn sàng hỗ trợ bạn.
+            Our team is ready to help you find the right opportunity abroad.
           </p>
           <div className="card-dark p-8 space-y-4">
             {[
-              { label: "Họ tên", type: "text", placeholder: "Nguyễn Văn A" },
-              {
-                label: "Email",
-                type: "email",
-                placeholder: "email@example.com",
-              },
-              {
-                label: "Số điện thoại",
-                type: "tel",
-                placeholder: "0901 234 567",
-              },
+              { label: "Full Name", type: "text", placeholder: "John Smith" },
+              { label: "Email", type: "email", placeholder: "email@example.com" },
+              { label: "Phone", type: "tel", placeholder: "+61 400 000 000" },
             ].map((f) => (
               <div key={f.label}>
-                <label className="text-xs text-brand-muted mb-1.5 block">
-                  {f.label}
-                </label>
-                <input
-                  type={f.type}
-                  className="input-dark"
-                  placeholder={f.placeholder}
-                />
+                <label className="text-xs text-brand-muted mb-1.5 block">{f.label}</label>
+                <input type={f.type} className="input-dark" placeholder={f.placeholder} />
               </div>
             ))}
             <div>
-              <label className="text-xs text-brand-muted mb-1.5 block">
-                Nội dung
-              </label>
-              <textarea
-                className="input-dark h-28 resize-none"
-                placeholder="Bạn cần tư vấn về vấn đề gì?"
-              />
+              <label className="text-xs text-brand-muted mb-1.5 block">Message</label>
+              <textarea className="input-dark h-28 resize-none" placeholder="How can we help you?" />
             </div>
-            <button className="btn-primary w-full py-3">
-              Gửi yêu cầu tư vấn
-            </button>
+            <button className="btn-primary w-full py-3">Send Message</button>
           </div>
         </div>
       </div>
@@ -114,11 +98,9 @@ function NotFound() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="font-display text-9xl gradient-text">404</p>
-          <p className="text-white font-semibold text-xl mt-2">
-            Trang không tồn tại
-          </p>
+          <p className="text-white font-semibold text-xl mt-2">Page not found</p>
           <a href="/" className="btn-primary inline-block mt-6 px-6 py-3">
-            Về trang chủ
+            Back to Home
           </a>
         </div>
       </div>
@@ -145,42 +127,21 @@ export default function App() {
       />
       <Routes>
         {/* User routes */}
-        <Route
-          path="/"
-          element={
-            <UserLayout>
-              <HomePage />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/jobs"
-          element={
-            <UserLayout>
-              <JobsPage />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/jobs/:id"
-          element={
-            <UserLayout>
-              <JobDetailPage />
-            </UserLayout>
-          }
-        />
+        <Route path="/" element={<UserLayout><HomePage /></UserLayout>} />
+        <Route path="/jobs" element={<UserLayout><JobsPage /></UserLayout>} />
+        <Route path="/jobs/:id" element={<UserLayout><JobDetailPage /></UserLayout>} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/profile"
-          element={
-            <UserLayout>
-              <ProfilePage />
-            </UserLayout>
-          }
-        />
+        <Route path="/profile" element={<UserLayout><ProfilePage /></UserLayout>} />
+
+        {/* Employer routes */}
+        <Route path="/employer" element={<EmployerLayout />}>
+          <Route index element={<EmployerDashboard />} />
+          <Route path="jobs" element={<EmployerJobsPage />} />
+          <Route path="applications" element={<EmployerApplicationsPage />} />
+        </Route>
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>

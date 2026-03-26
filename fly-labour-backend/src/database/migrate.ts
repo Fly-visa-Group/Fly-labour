@@ -3,14 +3,13 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 const databaseUrl = process.env.DATABASE_URL
-const isInternal = databaseUrl?.includes('.railway.internal') ?? false
 
 const ds = new DataSource(
   databaseUrl
     ? {
         type: 'postgres',
         url: databaseUrl,
-        ssl: isInternal ? false : { rejectUnauthorized: false },
+        ssl: { rejectUnauthorized: false },
         extra: { max: 2, connectionTimeoutMillis: 10000 },
       }
     : {
@@ -46,25 +45,15 @@ async function migrate() {
     $$;
   `)
 
-  // Add employer role to users_role_enum (idempotent)
-  await ds.query(`
-    DO $$
-    BEGIN
-      IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'users_role_enum') THEN
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_enum
-          INNER JOIN pg_type ON pg_enum.enumtypid = pg_type.oid
-          WHERE pg_type.typname = 'users_role_enum' AND pg_enum.enumlabel = 'employer'
-        ) THEN
-          ALTER TYPE users_role_enum ADD VALUE 'employer';
-          RAISE NOTICE 'Added employer to users_role_enum';
-        ELSE
-          RAISE NOTICE 'employer already exists in users_role_enum';
-        END IF;
-      END IF;
-    END
-    $$;
+  // Add employer role to users_role_enum (idempotent, PG 9.3+)
+  // ALTER TYPE ... ADD VALUE IF NOT EXISTS runs outside PL/pgSQL to avoid transaction issues
+  const enumExists = await ds.query(`
+    SELECT 1 FROM pg_type WHERE typname = 'users_role_enum'
   `)
+  if (enumExists.length > 0) {
+    await ds.query(`ALTER TYPE users_role_enum ADD VALUE IF NOT EXISTS 'employer'`)
+    console.log('✅ users_role_enum checked/updated')
+  }
 
   // Add employer company fields to users table (idempotent)
   await ds.query(`
