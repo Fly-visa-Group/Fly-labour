@@ -1,0 +1,5 @@
+cái quốc gia ở header chưa đồng bộ
+tạo mục riêng cho chủ doanh nghiệp đăng kí
+làm web dịch sang tiếng anh 
+làm doanh nghiệp thì nhìn được cv ứng viên
+doanh nghiệp có thể tạo đơn hàng tuyển dụng
