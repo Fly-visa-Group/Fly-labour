@@ -125,6 +125,8 @@ export default function AdminJobsPage() {
   const [saving, setSaving] = useState(false);
   const [imgTab, setImgTab] = useState<"upload" | "url">("upload");
   const [urlInput, setUrlInput] = useState("");
+  const [salaryPeriod, setSalaryPeriod] = useState<"hourly" | "weekly" | "monthly" | "yearly">("monthly");
+  const [tableSalaryPeriod, setTableSalaryPeriod] = useState<"hourly" | "weekly" | "monthly" | "yearly">("monthly");
   const fileRef = useRef<HTMLInputElement>(null);
   const fileObjRef = useRef<File | null>(null);
 
@@ -138,11 +140,30 @@ export default function AdminJobsPage() {
     return matchSearch && matchStatus;
   });
 
+  const getSalaryEstimates = (value: number, period: string) => {
+    let monthly: number;
+    switch (period) {
+      case "hourly": monthly = (value * 40 * 52) / 12; break;
+      case "weekly": monthly = (value * 52) / 12; break;
+      case "yearly": monthly = value / 12; break;
+      default: monthly = value;
+    }
+    const fmt = (n: number) =>
+      n >= 1000 ? `${(n / 1000).toFixed(1)}k` : n.toFixed(0);
+    return {
+      hourly: fmt(monthly / ((40 * 52) / 12)),
+      weekly: fmt((monthly * 12) / 52),
+      monthly: fmt(monthly),
+      yearly: fmt(monthly * 12),
+    };
+  };
+
   const openAdd = () => {
     setForm(EMPTY_FORM);
     setEditing(null);
     setUrlInput("");
     fileObjRef.current = null;
+    setSalaryPeriod("monthly");
     setModal("add");
   };
   const openEdit = (job: Job) => {
@@ -389,8 +410,8 @@ export default function AdminJobsPage() {
       </div>
 
       {/* Search */}
-      <div className="card-dark p-4 flex gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="card-dark p-4 flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[180px] max-w-sm">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted text-sm">
             🔍
           </span>
@@ -400,6 +421,27 @@ export default function AdminJobsPage() {
             className="input-dark pl-9 py-2 text-sm h-10"
             placeholder="Tìm tên việc, công ty..."
           />
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <span className="text-xs text-brand-muted whitespace-nowrap">Hiển thị lương:</span>
+          <div className="flex rounded-lg border border-brand-border overflow-hidden text-xs">
+            {(["hourly", "weekly", "monthly", "yearly"] as const).map((p) => {
+              const label = { hourly: "Giờ", weekly: "Tuần", monthly: "Tháng", yearly: "Năm" }[p];
+              return (
+                <button
+                  key={p}
+                  onClick={() => setTableSalaryPeriod(p)}
+                  className={`px-3 py-1.5 font-medium transition-colors ${
+                    tableSalaryPeriod === p
+                      ? "bg-brand-yellow/20 text-brand-yellow"
+                      : "text-brand-muted hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -419,7 +461,7 @@ export default function AdminJobsPage() {
                   Quốc gia
                 </th>
                 <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden md:table-cell">
-                  Lương
+                  Lương / {{ hourly: "Giờ", weekly: "Tuần", monthly: "Tháng", yearly: "Năm" }[tableSalaryPeriod]}
                 </th>
                 <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden lg:table-cell">
                   Nguồn đăng
@@ -483,13 +525,22 @@ export default function AdminJobsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
-                    <span className="text-brand-yellow text-xs font-medium">
-                      {formatSalary(
-                        job.salaryMin,
-                        job.salaryMax,
-                        job.salaryCurrency,
-                      )}
-                    </span>
+                    {job.salaryMin || job.salaryMax ? (
+                      <span className="text-brand-yellow text-xs font-medium">
+                        {(() => {
+                          const cur = job.salaryCurrency || "";
+                          if (tableSalaryPeriod === "monthly") {
+                            return formatSalary(job.salaryMin, job.salaryMax, cur);
+                          }
+                          const minE = job.salaryMin ? getSalaryEstimates(job.salaryMin, "monthly")[tableSalaryPeriod] : null;
+                          const maxE = job.salaryMax ? getSalaryEstimates(job.salaryMax, "monthly")[tableSalaryPeriod] : null;
+                          const range = [minE, maxE].filter(Boolean).join(" – ");
+                          return range ? `${cur} ${range}` : "—";
+                        })()}
+                      </span>
+                    ) : (
+                      <span className="text-brand-muted text-xs">—</span>
+                    )}
                   </td>
                   {/* Nguồn đăng */}
                   <td className="px-4 py-3 hidden lg:table-cell">
@@ -838,6 +889,43 @@ export default function AdminJobsPage() {
                 </div>
                 <div>
                   <label className="text-xs text-brand-muted mb-1.5 block">
+                    Đơn vị lương nhập
+                  </label>
+                  <select
+                    value={salaryPeriod}
+                    onChange={(e) => setSalaryPeriod(e.target.value as "hourly" | "weekly" | "monthly" | "yearly")}
+                    className="input-dark"
+                  >
+                    <option value="hourly">Theo giờ</option>
+                    <option value="weekly">Theo tuần</option>
+                    <option value="monthly">Theo tháng</option>
+                    <option value="yearly">Theo năm</option>
+                  </select>
+                </div>
+                {(form.salaryMin || form.salaryMax) && (
+                  <div className="sm:col-span-2 p-3 bg-brand-yellow/5 border border-brand-yellow/20 rounded-xl">
+                    <p className="text-xs text-brand-yellow font-semibold mb-2 flex items-center gap-1.5">
+                      <Clock size={12} /> Ước lượng lương ({form.salaryCurrency})
+                    </p>
+                    <div className="grid grid-cols-4 gap-2">
+                      {(["hourly", "weekly", "monthly", "yearly"] as const).map((p) => {
+                        const labels = { hourly: "/ giờ", weekly: "/ tuần", monthly: "/ tháng", yearly: "/ năm" };
+                        const minEst = form.salaryMin ? getSalaryEstimates(Number(form.salaryMin), salaryPeriod)[p] : null;
+                        const maxEst = form.salaryMax ? getSalaryEstimates(Number(form.salaryMax), salaryPeriod)[p] : null;
+                        return (
+                          <div key={p} className={`rounded-lg p-2 text-center border ${p === salaryPeriod ? "border-brand-yellow/40 bg-brand-yellow/10" : "border-brand-border bg-brand-dark/40"}`}>
+                            <p className="text-[10px] text-brand-muted mb-1">{labels[p]}</p>
+                            <p className="text-xs font-semibold text-white leading-tight">
+                              {minEst && maxEst ? `${minEst} – ${maxEst}` : minEst || maxEst || "—"}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <label className="text-xs text-brand-muted mb-1.5 block">
                     Số chỉ tiêu
                   </label>
                   <input
@@ -872,9 +960,6 @@ export default function AdminJobsPage() {
                     className="input-dark"
                   >
                     <option value="">-- Chọn danh mục --</option>
-                    <option value="e6fd026a-141e-4115-aa1d-32cbcffab2e7">
-                      💼 Dịch vụ
-                    </option>
                     {cats.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.icon} {c.name}
