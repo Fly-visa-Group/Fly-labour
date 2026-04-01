@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -8,18 +9,18 @@ export default {
           // ── Gold palette ──────────────────────────────
           yellow:  '#fdd52f',   // Primary CTA / accent
           gold:    '#e4a808',   // Dark gold — gradient / hover
-          lime:    '#f2ee8c',   // Soft lime-gold — subtle highlights
-          cream:   '#ffea80',   // Cream yellow — badges / backgrounds
-          orange:  '#e4a808',   // alias kept for backward compat
-          // ── Neutrals ──────────────────────────────────
-          gray:    '#505050',   // Mid gray
-          muted:   '#888888',   // Muted text
-          // ── Dark surfaces ─────────────────────────────
-          dark:    'rgba(12, 12, 12, 0.86)',
-          card:    'rgba(20, 20, 20, 0.88)',
-          panel:   'rgba(26, 26, 26, 0.88)',
-          border:  '#2a2a2a',
-          line:    '#1f1f1f',
+          lime:    '#f2ee8c',   // Soft lime-gold
+          cream:   '#ffea80',   // Cream yellow
+          orange:  '#e4a808',   // alias
+          // ── Dark Mode Neutrals ────────────────────────
+          gray:    '#9ca3af',   // Mid gray
+          muted:   '#9ca3af',   // Muted text — readable on dark
+          // ── Dark Mode Surfaces ────────────────────────
+          dark:    '#121212',   // Main background — charcoal black
+          card:    '#1E1E1E',   // Card background — slightly lighter
+          panel:   '#2A2A2A',   // Panel / Hover state
+          border:  '#333333',   // Border — dark
+          line:    '#404040',   // Divider line — dark
         },
       },
       fontFamily: {
@@ -45,12 +46,12 @@ export default {
         'gold-gradient':   'linear-gradient(135deg, #e4a808 0%, #fdd52f 100%)',
         'gold-gradient-v': 'linear-gradient(180deg, #fdd52f 0%, #e4a808 100%)',
         'gold-soft':       'linear-gradient(135deg, #fdd52f 0%, #f2ee8c 100%)',
-        'card-gradient':   'linear-gradient(180deg, #161616 0%, #111111 100%)',
+        'card-gradient':   'linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%)',
       },
       boxShadow: {
         'gold':    '0 4px 24px rgba(228,168,8,0.28)',
         'gold-sm': '0 2px 10px rgba(228,168,8,0.20)',
-        'card':    '0 2px 12px rgba(0,0,0,0.6)',
+        'card':    '0 2px 12px rgba(0,0,0,0.08)',
       },
     },
   },

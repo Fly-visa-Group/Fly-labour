@@ -6,7 +6,6 @@ import FlashSaleJobs from "@/components/home/FlashSaleJobs";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import NewsSection from "@/components/home/NewsSection";
-import ServiceSelectorSection from "@/components/home/ServiceSelectorSection";
 import EmployerCTASection from "@/components/home/EmployerCTASection";
 import JobCard from "@/components/jobs/JobCard";
 import { jobsApi } from "@/services/api";
@@ -17,16 +16,19 @@ export default function HomePage() {
   const [latestJobs, setLatestJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useT();
-  const h = t('home');
+  const h = t("home");
 
   useEffect(() => {
-    jobsApi.getAll({ limit: 6 }).then((r) => setLatestJobs(r.data.data)).catch(() => {}).finally(() => setLoading(false));
+    jobsApi
+      .getAll({ limit: 6 })
+      .then((r) => setLatestJobs(r.data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <main>
       <HeroBanner />
-      <ServiceSelectorSection />
       <FlashSaleJobs />
       <CategoriesSection />
 
@@ -42,7 +44,10 @@ export default function HomePage() {
                 <span className="gradient-text">{h.latestTitle}</span>
               </h2>
             </div>
-            <Link to="/jobs" className="btn-outline text-sm px-4 py-2 flex items-center gap-1.5">
+            <Link
+              to="/jobs"
+              className="btn-outline text-sm px-4 py-2 flex items-center gap-1.5"
+            >
               {h.viewAll} <ArrowRight size={14} />
             </Link>
           </div>
@@ -50,7 +55,10 @@ export default function HomePage() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-72 bg-brand-card rounded-2xl animate-pulse border border-brand-border" />
+                <div
+                  key={i}
+                  className="h-72 bg-brand-card rounded-2xl animate-pulse border border-brand-border"
+                />
               ))}
             </div>
           ) : (
@@ -83,8 +91,12 @@ export default function HomePage() {
               </h2>
               <p className="text-gray-400 mb-8 max-w-lg mx-auto">{h.ctaDesc}</p>
               <div className="flex justify-center gap-4 flex-wrap">
-                <Link to="/register" className="btn-primary px-8 py-3">{h.ctaRegister}</Link>
-                <Link to="/contact" className="btn-outline px-8 py-3">{h.ctaConsult}</Link>
+                <Link to="/register" className="btn-primary px-8 py-3">
+                  {h.ctaRegister}
+                </Link>
+                <Link to="/contact" className="btn-outline px-8 py-3">
+                  {h.ctaConsult}
+                </Link>
               </div>
             </div>
           </div>

@@ -1,67 +1,119 @@
-import { useState, useRef, useEffect } from 'react'
-import { Plus, Pencil, Trash2, X, CheckCircle, XCircle, Eye, Upload, Image as ImageIcon, Clock } from 'lucide-react'
-import type { Category, Job } from '@/types'
-import { getCountryLabels, JOBTYPE_LABELS, formatSalary, formatDate } from '@/utils/helpers'
-import toast from 'react-hot-toast'
-import { categoriesApi, jobsApi, getImageUrl } from '@/services/api'
+import { useState, useRef, useEffect } from "react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Upload,
+  Image as ImageIcon,
+  Clock,
+} from "lucide-react";
+import type { Category, Job } from "@/types";
+import {
+  getCountryLabels,
+  JOBTYPE_LABELS,
+  formatSalary,
+  formatDate,
+} from "@/utils/helpers";
+import toast from "react-hot-toast";
+import { categoriesApi, jobsApi, getImageUrl } from "@/services/api";
 
 const STATUS_COLORS = {
-  active:         'text-green-400 bg-green-400/10 border-green-400/20',
-  paused:         'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-  closed:         'text-red-400 bg-red-400/10 border-red-400/20',
-  draft:          'text-gray-400 bg-gray-400/10 border-gray-400/20',
-  pending_review: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
-}
-const STATUS_LABELS = { active: 'Hoạt động', paused: 'Tạm dừng', closed: 'Đã đóng', draft: 'Nháp', pending_review: 'Chờ duyệt' }
+  active: "text-green-400 bg-green-400/10 border-green-400/20",
+  paused: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
+  closed: "text-red-400 bg-red-400/10 border-red-400/20",
+  draft: "text-gray-400 bg-gray-400/10 border-gray-400/20",
+  pending_review: "text-orange-400 bg-orange-400/10 border-orange-400/20",
+};
+const STATUS_LABELS = {
+  active: "Hoạt động",
+  paused: "Tạm dừng",
+  closed: "Đã đóng",
+  draft: "Nháp",
+  pending_review: "Chờ duyệt",
+};
 
 // Danh sách quốc gia có sẵn
 const PRESET_COUNTRIES = [
-  { value: 'australia',   label: '🇦🇺 Úc (Australia)' },
-  { value: 'canada',      label: '🇨🇦 Canada' },
-  { value: 'new_zealand', label: '🇳🇿 New Zealand' },
-  { value: 'uk',          label: '🇬🇧 Anh Quốc (UK)' },
-  { value: 'germany',     label: '🇩🇪 Đức (Germany)' },
-  { value: 'japan',       label: '🇯🇵 Nhật Bản (Japan)' },
-  { value: 'norway',      label: '🇳🇴 Na Uy (Norway)' },
-  { value: 'portugal',    label: '🇵🇹 Bồ Đào Nha (Portugal)' },
-  { value: 'czech',       label: '🇨🇿 Séc (Czech Republic)' },
-  { value: 'us',          label: '🇺🇸 Mỹ (USA)' },
-  { value: 'singapore',   label: '🇸🇬 Singapore' },
-  { value: 'south_korea', label: '🇰🇷 Hàn Quốc (Korea)' },
-  { value: 'taiwan',      label: '🇹🇼 Đài Loan (Taiwan)' },
-  { value: 'uae',         label: '🇦🇪 UAE' },
-  { value: '__other__',   label: '✏️ Khác (nhập tay)...' },
-]
+  { value: "australia", label: "🇦🇺 Úc (Australia)" },
+  { value: "canada", label: "🇨🇦 Canada" },
+  { value: "new_zealand", label: "🇳🇿 New Zealand" },
+  { value: "uk", label: "🇬🇧 Anh Quốc (UK)" },
+  { value: "germany", label: "🇩🇪 Đức (Germany)" },
+  { value: "japan", label: "🇯🇵 Nhật Bản (Japan)" },
+  { value: "norway", label: "🇳🇴 Na Uy (Norway)" },
+  { value: "portugal", label: "🇵🇹 Bồ Đào Nha (Portugal)" },
+  { value: "czech", label: "🇨🇿 Séc (Czech Republic)" },
+  { value: "us", label: "🇺🇸 Mỹ (USA)" },
+  { value: "singapore", label: "🇸🇬 Singapore" },
+  { value: "south_korea", label: "🇰🇷 Hàn Quốc (Korea)" },
+  { value: "taiwan", label: "🇹🇼 Đài Loan (Taiwan)" },
+  { value: "uae", label: "🇦🇪 UAE" },
+  { value: "__other__", label: "✏️ Khác (nhập tay)..." },
+];
 
 type FormData = {
-  title: string; company: string; location: string; country: string; countryCustom: string;
-  jobType: string; status: string; salaryMin: string; salaryMax: string;
-  salaryCurrency: string; slots: string; deadline: string;
-  isHot: boolean; isFeatured: boolean; categoryId: string;
-  description: string; requirements: string; benefits: string;
+  title: string;
+  company: string;
+  location: string;
+  country: string;
+  countryCustom: string;
+  jobType: string;
+  status: string;
+  salaryMin: string;
+  salaryMax: string;
+  salaryCurrency: string;
+  slots: string;
+  deadline: string;
+  isHot: boolean;
+  isFeatured: boolean;
+  categoryId: string;
+  description: string;
+  requirements: string;
+  benefits: string;
   imagePreview: string;
-  image2: string; image3: string;
-}
+  image2: string;
+  image3: string;
+};
 
 const EMPTY_FORM: FormData = {
-  title: '', company: '', location: '', country: 'australia', countryCustom: '',
-  jobType: 'full_time', status: 'active', salaryMin: '', salaryMax: '',
-  salaryCurrency: 'AUD', slots: '', deadline: '', isHot: false, isFeatured: false,
-  categoryId: '', description: '', requirements: '', benefits: '', imagePreview: '',
-  image2: '', image3: '',
-}
+  title: "",
+  company: "",
+  location: "",
+  country: "australia",
+  countryCustom: "",
+  jobType: "full_time",
+  status: "active",
+  salaryMin: "",
+  salaryMax: "",
+  salaryCurrency: "AUD",
+  slots: "",
+  deadline: "",
+  isHot: false,
+  isFeatured: false,
+  categoryId: "",
+  description: "",
+  requirements: "",
+  benefits: "",
+  imagePreview: "",
+  image2: "",
+  image3: "",
+};
 
 // Default images per category for suggestion
 const SUGGESTED_IMAGES: Record<string, string> = {
-  '1': 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=75',
-  '2': 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=75',
-  '3': 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=75',
-  '4': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=75',
-  '5': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=75',
-  '6': 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=75',
-  '7': 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=75',
-  '8': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=75',
-}
+  "1": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=75",
+  "2": "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=75",
+  "3": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=75",
+  "4": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=75",
+  "5": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=75",
+  "6": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=75",
+  "7": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=75",
+  "8": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=75",
+};
 
 export default function AdminJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -80,57 +132,84 @@ export default function AdminJobsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const fileObjRef = useRef<File | null>(null);
 
-  const pendingJobs = jobs.filter(j => j.status === 'pending_review')
-  const filtered = jobs.filter(j => {
-    const matchSearch = !search || j.title.toLowerCase().includes(search.toLowerCase()) ||
-      j.company?.toLowerCase().includes(search.toLowerCase())
-    const matchStatus = !statusFilter || j.status === statusFilter
-    return matchSearch && matchStatus
-  })
+  const pendingJobs = jobs.filter((j) => j.status === "pending_review");
+  const filtered = jobs.filter((j) => {
+    const matchSearch =
+      !search ||
+      j.title.toLowerCase().includes(search.toLowerCase()) ||
+      j.company?.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = !statusFilter || j.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
 
-  const openAdd = () => { setForm(EMPTY_FORM); setEditing(null); setUrlInput(''); fileObjRef.current = null; setModal('add') }
+  const openAdd = () => {
+    setForm(EMPTY_FORM);
+    setEditing(null);
+    setUrlInput("");
+    fileObjRef.current = null;
+    setModal("add");
+  };
   const openEdit = (job: Job) => {
-    const isPreset = PRESET_COUNTRIES.some(c => c.value === job.country && c.value !== '__other__')
+    const isPreset = PRESET_COUNTRIES.some(
+      (c) => c.value === job.country && c.value !== "__other__",
+    );
     setForm({
-      title: job.title, company: job.company || '', location: job.location || '',
-      country: isPreset ? job.country : '__other__',
-      countryCustom: isPreset ? '' : (job.country || ''),
-      jobType: job.jobType, status: job.status,
-      salaryMin: job.salaryMin?.toString() || '', salaryMax: job.salaryMax?.toString() || '',
-      salaryCurrency: job.salaryCurrency || 'AUD', slots: job.slots?.toString() || '',
-      deadline: job.deadline?.slice(0, 10) || '', isHot: job.isHot, isFeatured: job.isFeatured,
-      categoryId: job.categoryId || '', description: job.description,
-      requirements: job.requirements || '', benefits: job.benefits || '',
-      imagePreview: job.image || '',
-      image2: job.images?.[0] || '',
-      image3: job.images?.[1] || '',
-    })
-    setUrlInput(job.image || '')
-    fileObjRef.current = null
-    setEditing(job); setModal('edit')
-  }
+      title: job.title,
+      company: job.company || "",
+      location: job.location || "",
+      country: isPreset ? job.country : "__other__",
+      countryCustom: isPreset ? "" : job.country || "",
+      jobType: job.jobType,
+      status: job.status,
+      salaryMin: job.salaryMin?.toString() || "",
+      salaryMax: job.salaryMax?.toString() || "",
+      salaryCurrency: job.salaryCurrency || "AUD",
+      slots: job.slots?.toString() || "",
+      deadline: job.deadline?.slice(0, 10) || "",
+      isHot: job.isHot,
+      isFeatured: job.isFeatured,
+      categoryId: job.categoryId || "",
+      description: job.description,
+      requirements: job.requirements || "",
+      benefits: job.benefits || "",
+      imagePreview: job.image || "",
+      image2: job.images?.[0] || "",
+      image3: job.images?.[1] || "",
+    });
+    setUrlInput(job.image || "");
+    fileObjRef.current = null;
+    setEditing(job);
+    setModal("edit");
+  };
 
   // Handle file upload → lưu File object + tạo preview
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 5 * 1024 * 1024) { toast.error('Ảnh tối đa 5MB'); return }
-    fileObjRef.current = file
-    const reader = new FileReader()
-    reader.onload = () => setForm(f => ({ ...f, imagePreview: reader.result as string }))
-    reader.readAsDataURL(file)
-  }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ảnh tối đa 5MB");
+      return;
+    }
+    fileObjRef.current = file;
+    const reader = new FileReader();
+    reader.onload = () =>
+      setForm((f) => ({ ...f, imagePreview: reader.result as string }));
+    reader.readAsDataURL(file);
+  };
 
   const applyUrlInput = () => {
-    if (!urlInput.trim()) return
-    setForm(f => ({ ...f, imagePreview: urlInput.trim() }))
-    toast.success('Đã áp dụng URL ảnh')
-  }
+    if (!urlInput.trim()) return;
+    setForm((f) => ({ ...f, imagePreview: urlInput.trim() }));
+    toast.success("Đã áp dụng URL ảnh");
+  };
 
   const useSuggestedImage = (catId: string) => {
-    const url = SUGGESTED_IMAGES[catId]
-    if (url) { setForm(f => ({ ...f, imagePreview: url })); setUrlInput(url) }
-  }
+    const url = SUGGESTED_IMAGES[catId];
+    if (url) {
+      setForm((f) => ({ ...f, imagePreview: url }));
+      setUrlInput(url);
+    }
+  };
   const loadJobs = () => {
     setLoading(true);
     jobsApi
@@ -175,15 +254,19 @@ export default function AdminJobsPage() {
       });
 
       // Gắn gallery images (image2, image3) nếu có
-      const galleryImgs = [form.image2, form.image3].filter(Boolean)
+      const galleryImgs = [form.image2, form.image3].filter(Boolean);
       if (galleryImgs.length > 0) {
-        fd.append('images', JSON.stringify(galleryImgs))
+        fd.append("images", JSON.stringify(galleryImgs));
       }
 
       // Nếu chọn "Khác", ghi đè country bằng giá trị nhập tay
-      if (form.country === '__other__') {
-        if (!form.countryCustom.trim()) { toast.error('Vui lòng nhập tên quốc gia'); setSaving(false); return }
-        fd.set('country', form.countryCustom.trim())
+      if (form.country === "__other__") {
+        if (!form.countryCustom.trim()) {
+          toast.error("Vui lòng nhập tên quốc gia");
+          setSaving(false);
+          return;
+        }
+        fd.set("country", form.countryCustom.trim());
       }
 
       // Xử lý ảnh
@@ -245,8 +328,14 @@ export default function AdminJobsPage() {
     }
   };
 
-  const set = (k: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }))
+  const set =
+    (k: keyof FormData) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
 
   return (
     <div className="space-y-5">
@@ -274,19 +363,35 @@ export default function AdminJobsPage() {
       {/* Filter tabs */}
       <div className="flex flex-wrap gap-2">
         {[
-          { value: '', label: 'Tất cả', count: jobs.length },
-          { value: 'pending_review', label: '⏳ Chờ duyệt', count: jobs.filter(j => j.status === 'pending_review').length },
-          { value: 'active', label: '✅ Hoạt động', count: jobs.filter(j => j.status === 'active').length },
-          { value: 'paused', label: '⏸ Tạm dừng', count: jobs.filter(j => j.status === 'paused').length },
-          { value: 'closed', label: '❌ Đã đóng', count: jobs.filter(j => j.status === 'closed').length },
-        ].map(tab => (
+          { value: "", label: "Tất cả", count: jobs.length },
+          {
+            value: "pending_review",
+            label: "⏳ Chờ duyệt",
+            count: jobs.filter((j) => j.status === "pending_review").length,
+          },
+          {
+            value: "active",
+            label: "✅ Hoạt động",
+            count: jobs.filter((j) => j.status === "active").length,
+          },
+          {
+            value: "paused",
+            label: "⏸ Tạm dừng",
+            count: jobs.filter((j) => j.status === "paused").length,
+          },
+          {
+            value: "closed",
+            label: "❌ Đã đóng",
+            count: jobs.filter((j) => j.status === "closed").length,
+          },
+        ].map((tab) => (
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
               statusFilter === tab.value
-                ? 'bg-brand-yellow/15 border-brand-yellow/40 text-brand-yellow'
-                : 'border-brand-border text-brand-muted hover:border-white/20 hover:text-white'
+                ? "bg-brand-yellow/15 border-brand-yellow/40 text-brand-yellow"
+                : "border-brand-border text-brand-muted hover:border-white/20 hover:text-white"
             }`}
           >
             {tab.label}
@@ -346,7 +451,7 @@ export default function AdminJobsPage() {
               {filtered.map((job) => (
                 <tr
                   key={job.id}
-                  className="border-b border-brand-border/40 hover:bg-white/[0.02] transition-colors"
+                  className="border-b border-brand-border/40 hover:bg-white/[0.03] transition-colors"
                 >
                   {/* Thumbnail */}
                   <td className="px-4 py-3">
@@ -427,7 +532,7 @@ export default function AdminJobsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
-                      {job.status === 'pending_review' && (
+                      {job.status === "pending_review" && (
                         <>
                           <button
                             onClick={() => handleApprove(job.id)}
@@ -524,7 +629,7 @@ export default function AdminJobsPage() {
                             setUrlInput("");
                             fileObjRef.current = null;
                           }}
-                          className="text-xs bg-red-500/80 hover:bg-red-500 text-white px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
+                          className="text-xs bg-red-500 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
                         >
                           <X size={11} /> Xóa ảnh
                         </button>
@@ -611,10 +716,7 @@ export default function AdminJobsPage() {
                       </p>
                       <p className="text-xs text-brand-muted mt-0.5">
                         Ảnh mặc định phù hợp với ngành{" "}
-                        {
-                          cats.find((c) => c.id === form.categoryId)
-                            ?.name
-                        }
+                        {cats.find((c) => c.id === form.categoryId)?.name}
                       </p>
                     </div>
                     <button
@@ -634,8 +736,8 @@ export default function AdminJobsPage() {
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { key: 'image2' as const, label: 'Ảnh phụ 1' },
-                    { key: 'image3' as const, label: 'Ảnh phụ 2' },
+                    { key: "image2" as const, label: "Ảnh phụ 1" },
+                    { key: "image3" as const, label: "Ảnh phụ 2" },
                   ].map(({ key, label }) => (
                     <div key={key} className="space-y-1.5">
                       {form[key] && (
@@ -644,10 +746,14 @@ export default function AdminJobsPage() {
                             src={form[key]}
                             alt={label}
                             className="w-full h-full object-cover"
-                            onError={() => setForm(f => ({ ...f, [key]: '' }))}
+                            onError={() =>
+                              setForm((f) => ({ ...f, [key]: "" }))
+                            }
                           />
                           <button
-                            onClick={() => setForm(f => ({ ...f, [key]: '' }))}
+                            onClick={() =>
+                              setForm((f) => ({ ...f, [key]: "" }))
+                            }
                             className="absolute top-1 right-1 bg-black/70 hover:bg-red-500 text-white rounded-md p-0.5 transition-colors"
                           >
                             <X size={10} />
@@ -656,14 +762,18 @@ export default function AdminJobsPage() {
                       )}
                       <input
                         value={form[key]}
-                        onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, [key]: e.target.value }))
+                        }
                         className="input-dark text-xs py-2"
                         placeholder={`${label} — dán URL ảnh`}
                       />
                     </div>
                   ))}
                 </div>
-                <p className="text-[11px] text-brand-muted/60">Hiển thị dưới dạng mosaic trong trang chi tiết việc làm</p>
+                <p className="text-[11px] text-brand-muted/60">
+                  Hiển thị dưới dạng mosaic trong trang chi tiết việc làm
+                </p>
               </div>
 
               {/* ── JOB INFO ── */}
@@ -705,15 +815,26 @@ export default function AdminJobsPage() {
                   <label className="text-xs text-brand-muted mb-1.5 block">
                     Quốc gia
                   </label>
-                  <select value={form.country} onChange={set("country")} className="input-dark">
-                    {PRESET_COUNTRIES.map(c => (
-                      <option key={c.value} value={c.value}>{c.label}</option>
+                  <select
+                    value={form.country}
+                    onChange={set("country")}
+                    className="input-dark"
+                  >
+                    {PRESET_COUNTRIES.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
                     ))}
                   </select>
-                  {form.country === '__other__' && (
+                  {form.country === "__other__" && (
                     <input
                       value={form.countryCustom}
-                      onChange={e => setForm(f => ({ ...f, countryCustom: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          countryCustom: e.target.value,
+                        }))
+                      }
                       className="input-dark mt-2"
                       placeholder="Nhập tên quốc gia (VD: Malaysia, Israel...)"
                     />
@@ -810,6 +931,9 @@ export default function AdminJobsPage() {
                     className="input-dark"
                   >
                     <option value="">-- Chọn danh mục --</option>
+                    <option value="e6fd026a-141e-4115-aa1d-32cbcffab2e7">
+                      💼 Dịch vụ
+                    </option>
                     {cats.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.icon} {c.name}
