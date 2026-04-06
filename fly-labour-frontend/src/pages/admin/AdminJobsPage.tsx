@@ -477,16 +477,16 @@ export default function AdminJobsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-brand-border bg-brand-dark/50">
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold w-12">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold w-12">
                   Ảnh
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold">
                   Tiêu đề
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden sm:table-cell">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold hidden sm:table-cell">
                   Quốc gia
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden md:table-cell">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold hidden md:table-cell">
                   Lương /{" "}
                   {
                     {
@@ -497,16 +497,16 @@ export default function AdminJobsPage() {
                     }[tableSalaryPeriod]
                   }
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden lg:table-cell">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold hidden lg:table-cell">
                   Nguồn đăng
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden lg:table-cell">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold hidden lg:table-cell">
                   Ngày đăng
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold">
+                <th className="text-left px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold">
                   Trạng thái
                 </th>
-                <th className="text-right px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold">
+                <th className="text-right px-4 py-3 text-xs text-black uppercase tracking-wide font-semibold">
                   Thao tác
                 </th>
               </tr>
@@ -535,7 +535,7 @@ export default function AdminJobsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-white text-sm font-medium line-clamp-1">
+                      <p className="text-[#f59e0b] text-sm font-medium line-clamp-1">
                         {job.title}
                       </p>
                       <p className="text-brand-muted text-xs">{job.company}</p>
@@ -680,7 +680,7 @@ export default function AdminJobsPage() {
           />
           <div className="relative bg-brand-card border border-brand-border rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-brand-border sticky top-0 bg-brand-card z-10">
-              <h2 className="font-semibold text-slate-900 dark:text-white">
+              <h2 className="font-semibold text-theme-text-base">
                 {modal === "add"
                   ? "➕ Thêm bài đăng mới"
                   : "✏️ Chỉnh sửa bài đăng"}

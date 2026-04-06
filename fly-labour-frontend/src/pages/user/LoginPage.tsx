@@ -24,7 +24,6 @@ export default function LoginPage() {
     try {
       await login(email, password);
       toast.success(a.welcome);
-      // Redirect theo role n?u không có trang c? th? c?n quay l?i
       if (from === '/') {
         const role = useAuthStore.getState().user?.role
         if (role === 'admin')    navigate('/admin', { replace: true })
@@ -59,12 +58,6 @@ export default function LoginPage() {
         </div>
 
         <div className="card-dark p-8">
-          <div className="mb-5 p-3 bg-brand-gold/5 border border-brand-gold/20 rounded-xl text-xs text-brand-muted">
-            <p className="font-semibold text-brand-gold mb-1">{a.demoTitle}</p>
-            <p>{a.adminLabel} <span className="text-white">admin@flylabour.com</span> / <span className="text-white">Admin@123</span></p>
-            <p>{a.userLabel} <span className="text-white">user@example.com</span> / <span className="text-white">User@123</span></p>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs text-brand-muted mb-1.5 block">{a.email}</label>
@@ -73,7 +66,7 @@ export default function LoginPage() {
             <div>
               <label className="text-xs text-brand-muted mb-1.5 block">{a.password}</label>
               <div className="relative">
-                <input type={showPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="input-dark pr-11" placeholder="••••••••" autoComplete="current-password" />
+                <input type={showPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="input-dark pr-11" placeholder="password" autoComplete="current-password" />
                 <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-white transition-colors">
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>

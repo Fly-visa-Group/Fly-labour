@@ -139,13 +139,11 @@ export default function AdminNewsPage() {
       if (form.excerpt) fd.append("excerpt", form.excerpt);
       if (form.content) fd.append("content", form.content);
       fd.append("isPublished", form.isPublished ? "true" : "false");
-
       if (fileObj.current) {
         fd.append("image", fileObj.current);
       } else if (imgTab === "url" && urlInput.trim()) {
         fd.append("image", urlInput.trim());
       }
-
       if (modal === "edit" && editing) {
         await newsApi.update(editing.id, fd);
         toast.success("Đã cập nhật bài viết");
@@ -188,8 +186,10 @@ export default function AdminNewsPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-bold text-white">Quản lý Tin tức</h1>
-          <p className="text-brand-muted text-sm">
+          <h1 className="text-xl font-bold text-theme-text-base">
+            Quản lý Tin tức
+          </h1>
+          <p className="text-theme-text-tertiary text-sm">
             {news.length} bài viết · {news.filter((n) => n.isPublished).length}{" "}
             đã đăng
           </p>
@@ -202,27 +202,27 @@ export default function AdminNewsPage() {
         </button>
       </div>
 
-      <div className="card-dark overflow-hidden">
+      <div className="bg-theme-surface border border-theme-border-default rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-brand-border bg-brand-dark/50">
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold w-12">
+              <tr className="border-b border-theme-border-default bg-theme-surfaceSecondary/50">
+                <th className="text-left px-4 py-3 text-xs text-theme-text-tertiary uppercase tracking-wide font-semibold w-12">
                   Ảnh
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold">
+                <th className="text-left px-4 py-3 text-xs text-theme-text-tertiary uppercase tracking-wide font-semibold">
                   Tiêu đề
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden md:table-cell">
+                <th className="text-left px-4 py-3 text-xs text-theme-text-tertiary uppercase tracking-wide font-semibold hidden md:table-cell">
                   Slug
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold hidden sm:table-cell">
+                <th className="text-left px-4 py-3 text-xs text-theme-text-tertiary uppercase tracking-wide font-semibold hidden sm:table-cell">
                   Ngày tạo
                 </th>
-                <th className="text-left px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold">
+                <th className="text-left px-4 py-3 text-xs text-theme-text-tertiary uppercase tracking-wide font-semibold">
                   Trạng thái
                 </th>
-                <th className="text-right px-4 py-3 text-xs text-brand-muted uppercase tracking-wide font-semibold">
+                <th className="text-right px-4 py-3 text-xs text-theme-text-tertiary uppercase tracking-wide font-semibold">
                   Thao tác
                 </th>
               </tr>
@@ -232,7 +232,7 @@ export default function AdminNewsPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="py-12 text-center text-brand-muted text-sm"
+                    className="py-12 text-center text-theme-text-tertiary text-sm"
                   >
                     Đang tải...
                   </td>
@@ -241,7 +241,7 @@ export default function AdminNewsPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="py-12 text-center text-brand-muted text-sm"
+                    className="py-12 text-center text-theme-text-tertiary text-sm"
                   >
                     Chưa có bài viết nào
                   </td>
@@ -250,10 +250,10 @@ export default function AdminNewsPage() {
                 news.map((n) => (
                   <tr
                     key={n.id}
-                    className="border-b border-brand-border/40 hover:bg-white/[0.02] transition-colors"
+                    className="border-b border-theme-border-default/40 hover:bg-theme-surfaceSecondary transition-colors"
                   >
                     <td className="px-4 py-3">
-                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-brand-dark border border-brand-border flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-theme-background border border-theme-border-default flex-shrink-0 shadow-sm">
                         {n.image ? (
                           <img
                             src={getImageUrl(n.image)}
@@ -261,34 +261,38 @@ export default function AdminNewsPage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-brand-muted">
+                          <div className="w-full h-full flex items-center justify-center text-theme-text-tertiary">
                             <ImageIcon size={14} />
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-white text-sm font-medium line-clamp-1">
+                      <p className="text-theme-text-base text-sm font-medium line-clamp-1">
                         {n.title}
                       </p>
                       {n.excerpt && (
-                        <p className="text-brand-muted text-xs line-clamp-1 mt-0.5">
+                        <p className="text-theme-text-tertiary text-xs line-clamp-1 mt-0.5">
                           {n.excerpt}
                         </p>
                       )}
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
-                      <code className="text-xs text-brand-gold bg-brand-gold/5 px-2 py-0.5 rounded">
+                      <code className="text-xs text-brand-gold-primary bg-brand-gold-primary/5 border border-brand-gold-primary/20 px-2 py-0.5 rounded">
                         {n.slug}
                       </code>
                     </td>
-                    <td className="px-4 py-3 hidden sm:table-cell text-brand-muted text-xs">
+                    <td className="px-4 py-3 hidden sm:table-cell text-theme-text-tertiary text-xs">
                       {formatDate(n.createdAt)}
                     </td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleTogglePublish(n)}
-                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${n.isPublished ? "text-green-400 bg-green-400/10 border-green-400/20 hover:bg-green-400/20" : "text-brand-gray-700 dark:text-brand-gray-300 bg-brand-gray-100 dark:bg-brand-gray-800 border-brand-gray-300 dark:border-brand-gray-700 hover:border-brand-gray-400 dark:hover:border-brand-gray-700"}`}
+                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
+                          n.isPublished
+                            ? "text-green-500 bg-green-500/10 border-green-500/20 hover:bg-green-500/20"
+                            : "text-theme-text-secondary bg-theme-background border-theme-border-default hover:bg-theme-surfaceSecondary"
+                        }`}
                       >
                         {n.isPublished ? (
                           <>
@@ -305,13 +309,13 @@ export default function AdminNewsPage() {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => openEdit(n)}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-brand-muted hover:text-brand-gold hover:bg-brand-gold/10 transition-colors"
+                          className="w-7 h-7 rounded-lg flex items-center justify-center text-theme-text-tertiary hover:text-brand-gold-primary hover:bg-theme-surfaceSecondary transition-colors"
                         >
                           <Pencil size={13} />
                         </button>
                         <button
                           onClick={() => setDeleting(n.id)}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-brand-muted hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                          className="w-7 h-7 rounded-lg flex items-center justify-center text-theme-text-tertiary hover:text-red-500 hover:bg-red-500/10 transition-colors"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -329,28 +333,30 @@ export default function AdminNewsPage() {
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setModal(null)}
           />
-          <div className="relative bg-brand-card border border-brand-border rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between p-5 border-b border-brand-border sticky top-0 bg-brand-card z-10">
-              <h2 className="font-semibold text-white">
+          <div className="relative bg-theme-surface border border-theme-border-default rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-theme-border-default sticky top-0 bg-theme-surface z-10">
+              <h2 className="font-semibold text-theme-text-base">
                 {modal === "add" ? "📰 Thêm bài viết" : "✏️ Chỉnh sửa bài viết"}
               </h2>
               <button onClick={() => setModal(null)}>
-                <X size={18} className="text-brand-muted hover:text-white" />
+                <X
+                  size={18}
+                  className="text-theme-text-tertiary hover:text-theme-text-base"
+                />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
               {/* ── ẢNH ── */}
               <div className="space-y-3">
-                <label className="text-xs text-brand-muted font-semibold uppercase tracking-wider block">
+                <label className="text-xs text-theme-text-secondary font-semibold uppercase tracking-wider block">
                   Ảnh bài viết
                 </label>
 
-                {/* Preview */}
-                <div className="relative w-full h-44 rounded-xl overflow-hidden border border-brand-border bg-brand-dark">
+                <div className="relative w-full h-44 rounded-xl overflow-hidden border border-theme-border-default bg-theme-background">
                   {form.imagePreview ? (
                     <>
                       <img
@@ -368,31 +374,30 @@ export default function AdminNewsPage() {
                             setUrlInput("");
                             fileObj.current = null;
                           }}
-                          className="text-xs bg-red-500/80 hover:bg-red-500 text-white px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
+                          className="text-xs bg-red-500/90 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
                         >
-                          <X size={11} /> Xóa ảnh
+                          <X size={12} /> Xóa ảnh
                         </button>
                       </div>
                     </>
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-brand-muted gap-2">
-                      <ImageIcon size={32} className="opacity-30" />
+                    <div className="w-full h-full flex flex-col items-center justify-center text-theme-text-tertiary gap-2">
+                      <ImageIcon size={32} className="opacity-40" />
                       <p className="text-xs">Chưa có ảnh</p>
                     </div>
                   )}
                 </div>
 
-                {/* Tabs */}
                 <div className="flex gap-1.5 text-xs">
                   <button
                     onClick={() => setImgTab("upload")}
-                    className={`px-3 py-1.5 rounded-lg border transition-colors ${imgTab === "upload" ? "bg-brand-gold/15 border-brand-gold/30 text-brand-gold" : "border-brand-border text-brand-muted hover:text-white"}`}
+                    className={`px-3 py-1.5 rounded-lg border transition-colors font-medium ${imgTab === "upload" ? "bg-brand-gold-primary/10 border-brand-gold-primary/30 text-brand-gold-primary" : "border-theme-border-default text-theme-text-secondary hover:text-theme-text-base hover:bg-theme-surfaceSecondary"}`}
                   >
                     📁 Upload từ máy
                   </button>
                   <button
                     onClick={() => setImgTab("url")}
-                    className={`px-3 py-1.5 rounded-lg border transition-colors ${imgTab === "url" ? "bg-brand-gold/15 border-brand-gold/30 text-brand-gold" : "border-brand-border text-brand-muted hover:text-white"}`}
+                    className={`px-3 py-1.5 rounded-lg border transition-colors font-medium ${imgTab === "url" ? "bg-brand-gold-primary/10 border-brand-gold-primary/30 text-brand-gold-primary" : "border-theme-border-default text-theme-text-secondary hover:text-theme-text-base hover:bg-theme-surfaceSecondary"}`}
                   >
                     🔗 Nhập URL ảnh
                   </button>
@@ -409,13 +414,15 @@ export default function AdminNewsPage() {
                     />
                     <button
                       onClick={() => fileRef.current?.click()}
-                      className="w-full border-2 border-dashed border-brand-border hover:border-brand-gold/40 rounded-xl py-4 flex flex-col items-center gap-2 text-brand-muted hover:text-white transition-all duration-200 group"
+                      className="w-full border-2 border-dashed border-theme-border-strong hover:border-brand-gold-primary/50 rounded-xl py-5 flex flex-col items-center gap-2 text-theme-text-secondary hover:text-brand-gold-primary transition-all duration-200 group bg-theme-surfaceSecondary/30"
                     >
                       <Upload
                         size={20}
-                        className="group-hover:text-brand-gold transition-colors"
+                        className="group-hover:-translate-y-1 transition-transform"
                       />
-                      <span className="text-sm">Nhấn để chọn ảnh</span>
+                      <span className="text-sm font-medium">
+                        Nhấn để chọn ảnh
+                      </span>
                       <span className="text-xs opacity-60">
                         JPG, PNG, WEBP — tối đa 5MB
                       </span>
@@ -444,7 +451,7 @@ export default function AdminNewsPage() {
 
               {/* ── NỘI DUNG ── */}
               <div>
-                <label className="text-xs text-brand-muted mb-1.5 block">
+                <label className="text-xs text-theme-text-tertiary mb-1.5 block">
                   Tiêu đề *
                 </label>
                 <input
@@ -455,7 +462,7 @@ export default function AdminNewsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs text-brand-muted mb-1.5 block">
+                <label className="text-xs text-theme-text-tertiary mb-1.5 block">
                   Slug (URL)
                 </label>
                 <input
@@ -466,7 +473,7 @@ export default function AdminNewsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs text-brand-muted mb-1.5 block">
+                <label className="text-xs text-theme-text-tertiary mb-1.5 block">
                   Tóm tắt
                 </label>
                 <textarea
@@ -477,7 +484,7 @@ export default function AdminNewsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs text-brand-muted mb-1.5 block">
+                <label className="text-xs text-theme-text-tertiary mb-1.5 block">
                   Nội dung bài viết
                 </label>
                 <textarea
@@ -487,21 +494,21 @@ export default function AdminNewsPage() {
                   placeholder="Nội dung chi tiết bài viết..."
                 />
               </div>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer pt-2">
                 <input
                   type="checkbox"
                   checked={form.isPublished}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, isPublished: e.target.checked }))
                   }
-                  className="w-4 h-4 accent-brand-gold"
+                  className="w-4 h-4 accent-brand-gold-primary"
                 />
-                <span className="text-sm text-white">
+                <span className="text-sm text-theme-text-base">
                   Đăng ngay (hiển thị công khai)
                 </span>
               </label>
 
-              <div className="flex gap-3 pt-1">
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleSave}
                   disabled={saving}
@@ -530,25 +537,27 @@ export default function AdminNewsPage() {
       {deleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setDeleting(null)}
           />
-          <div className="relative bg-brand-card border border-red-500/30 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
+          <div className="relative bg-theme-surface border border-red-500/30 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
             <p className="text-4xl mb-3">🗑️</p>
-            <h3 className="text-white font-semibold mb-2">Xác nhận xóa?</h3>
-            <p className="text-brand-muted text-sm mb-5">
+            <h3 className="text-theme-text-base font-semibold mb-2">
+              Xác nhận xóa?
+            </h3>
+            <p className="text-theme-text-tertiary text-sm mb-5">
               Bài viết sẽ bị xóa vĩnh viễn.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => handleDelete(deleting)}
-                className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold"
+                className="flex-1 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 text-sm font-semibold transition-colors"
               >
                 Xóa
               </button>
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 btn-outline py-2.5 text-sm"
+                className="flex-1 btn-outline py-2.5 text-sm border-theme-border-default text-theme-text-secondary hover:text-theme-text-base"
               >
                 Hủy
               </button>

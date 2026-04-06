@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { Bell, X, CheckCheck } from "lucide-react";
+import { Bell, X } from "lucide-react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useAuthStore } from "@/store/authStore";
 import { applicationsApi } from "@/services/api";
@@ -20,7 +20,6 @@ export default function AdminLayout() {
     return <Navigate to="/login" replace />;
   }
 
-  // Load don pending m?i nh?t l‡m thÙng b·o
   const loadNotifs = () => {
     setLoading(true);
     applicationsApi
@@ -35,12 +34,10 @@ export default function AdminLayout() {
 
   useEffect(() => {
     loadNotifs();
-    // T? refresh m?i 60 gi‚y
     const interval = setInterval(loadNotifs, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // –Ûng khi click ra ngo‡i
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
@@ -53,11 +50,12 @@ export default function AdminLayout() {
 
   const handleOpen = () => {
     setNotifOpen((o) => !o);
-    if (!notifOpen) setUnread(0); // d·nh d?u d„ d?c khi m?
+    if (!notifOpen) setUnread(0);
   };
 
   return (
-    <div className="flex h-screen bg-brand-dark overflow-hidden">
+    // D√πng bg-theme-background l√†m n·ªÅn t·ªïng
+    <div className="flex h-screen bg-theme-background overflow-hidden text-theme-text-base">
       {/* Desktop sidebar */}
       <div className="hidden md:flex flex-col">
         <AdminSidebar />
@@ -78,17 +76,17 @@ export default function AdminLayout() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top bar */}
-        <header className="flex items-center justify-between px-5 py-3 border-b border-brand-border bg-brand-card/80 backdrop-blur shrink-0">
+        {/* Top bar - D√πng bg-theme-surface */}
+        <header className="flex items-center justify-between px-5 py-3 border-b border-theme-border-default bg-theme-surface/80 backdrop-blur shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="md:hidden text-slate-900 hover:text-white"
+            className="md:hidden text-theme-text-secondary hover:text-theme-text-base"
           >
-            ?
+            ‚ò∞ {/* ƒê√£ ƒë·ªïi k√Ω t·ª± ? th√†nh icon menu ho·∫∑c text cho h·ª£p l√Ω */}
           </button>
           <div className="flex-1 hidden md:block">
-            <p className="text-xs text-brand-muted">
-              Fly Labour ∑ Admin Dashboard
+            <p className="text-xs text-theme-text-secondary font-medium">
+              Fly Labour ‚Ä¢ Admin Dashboard
             </p>
           </div>
 
@@ -97,35 +95,34 @@ export default function AdminLayout() {
             <div ref={notifRef} className="relative">
               <button
                 onClick={handleOpen}
-                className="relative w-9 h-9 rounded-xl bg-brand-dark border border-brand-border flex items-center justify-center text-brand-muted hover:text-white hover:border-brand-gold/40 transition-colors"
+                className="relative w-9 h-9 rounded-xl bg-theme-surface border border-theme-border-default flex items-center justify-center text-theme-text-secondary hover:text-theme-text-base hover:border-brand-gold-primary transition-colors"
               >
                 <Bell size={16} />
                 {unread > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-brand-orange text-white text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-brand-orange-primary text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
                     {unread > 9 ? "9+" : unread}
                   </span>
                 )}
               </button>
 
-              {/* Dropdown thÙng b·o */}
               {notifOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-brand-card border border-brand-border rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                <div className="absolute right-0 top-full mt-2 w-80 bg-theme-surface border border-theme-border-default rounded-2xl shadow-xl z-50 overflow-hidden">
                   {/* Header */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-brand-border">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-theme-border-default">
                     <div className="flex items-center gap-2">
-                      <Bell size={14} className="text-brand-gold" />
-                      <span className="font-semibold text-white text-sm">
-                        ThÙng b·o
+                      <Bell size={14} className="text-brand-gold-primary" />
+                      <span className="font-semibold text-theme-text-base text-sm">
+                        Th√¥ng b√°o
                       </span>
                       {notifications.length > 0 && (
-                        <span className="bg-brand-orange text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                        <span className="bg-brand-orange-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                           {notifications.length}
                         </span>
                       )}
                     </div>
                     <button
                       onClick={() => setNotifOpen(false)}
-                      className="text-brand-muted hover:text-white"
+                      className="text-theme-text-tertiary hover:text-theme-text-base"
                     >
                       <X size={15} />
                     </button>
@@ -138,15 +135,15 @@ export default function AdminLayout() {
                         {[...Array(3)].map((_, i) => (
                           <div
                             key={i}
-                            className="h-14 bg-brand-dark rounded-xl animate-pulse"
+                            className="h-14 bg-theme-surfaceSecondary rounded-xl animate-pulse"
                           />
                         ))}
                       </div>
                     ) : notifications.length === 0 ? (
                       <div className="py-10 text-center">
-                        <p className="text-3xl mb-2">??</p>
-                        <p className="text-brand-muted text-sm">
-                          KhÙng cÛ thÙng b·o m?i
+                        <p className="text-3xl mb-2">üì≠</p>
+                        <p className="text-theme-text-tertiary text-sm">
+                          Kh√¥ng c√≥ th√¥ng b√°o m·ªõi
                         </p>
                       </div>
                     ) : (
@@ -154,11 +151,11 @@ export default function AdminLayout() {
                         {notifications.map((app) => (
                           <div
                             key={app.id}
-                            className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group"
+                            className="flex items-start gap-3 p-3 rounded-xl hover:bg-theme-surfaceSecondary transition-colors cursor-pointer group"
                           >
                             {/* Avatar */}
                             <div
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-900 text-xs font-bold shrink-0 mt-0.5"
+                              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-900 text-xs font-bold shrink-0 mt-0.5 shadow-sm"
                               style={{
                                 background:
                                   "linear-gradient(135deg,#e4a808,#fdd52f)",
@@ -167,21 +164,21 @@ export default function AdminLayout() {
                               {app.fullName.charAt(0)}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-white text-xs font-medium">
-                                <span className="text-brand-gold">
+                              <p className="text-theme-text-base text-xs font-medium">
+                                <span className="text-brand-gold-primary font-bold">
                                   {app.fullName}
                                 </span>{" "}
-                                v?a ?ng tuy?n
+                                v·ª´a ·ª©ng tuy·ªÉn
                               </p>
-                              <p className="text-brand-muted text-xs truncate mt-0.5">
+                              <p className="text-theme-text-secondary text-xs truncate mt-0.5">
                                 {app.job?.title}
                               </p>
-                              <p className="text-brand-muted text-[10px] mt-1">
+                              <p className="text-theme-text-tertiary text-[10px] mt-1">
                                 {formatDate(app.createdAt)}
                               </p>
                             </div>
                             <span
-                              className={`shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${APP_STATUS_LABELS[app.status]?.color}`}
+                              className={`shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${APP_STATUS_LABELS[app.status]?.color} bg-theme-surface`}
                             >
                               {APP_STATUS_LABELS[app.status]?.label}
                             </span>
@@ -192,13 +189,13 @@ export default function AdminLayout() {
                   </div>
 
                   {/* Footer */}
-                  <div className="border-t border-brand-border p-2">
+                  <div className="border-t border-theme-border-default p-2 bg-theme-surfaceSecondary/50">
                     <a
                       href="/admin/applications"
-                      className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs text-brand-gold hover:bg-brand-gold/10 transition-colors font-medium"
+                      className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs text-brand-gold-primary hover:bg-brand-gold-primary/10 transition-colors font-semibold"
                       onClick={() => setNotifOpen(false)}
                     >
-                      Xem t?t c? don ?ng tuy?n ?
+                      Xem t·∫•t c·∫£ ƒë∆°n ·ª©ng tuy·ªÉn
                     </a>
                   </div>
                 </div>
@@ -207,7 +204,7 @@ export default function AdminLayout() {
 
             {/* Avatar */}
             <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-900 font-bold text-xs"
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-900 font-bold text-xs shadow-sm"
               style={{ background: "linear-gradient(135deg,#e4a808,#fdd52f)" }}
             >
               {user?.fullName?.charAt(0)}

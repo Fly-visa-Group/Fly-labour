@@ -17,7 +17,6 @@ import { APP_STATUS_LABELS, formatDate } from "@/utils/helpers";
 import type { Application } from "@/types";
 
 const PIE_COLORS = ["#fdd52f", "#3B82F6", "#10B981", "#EF4444", "#8B5CF6"];
-
 const MONTHLY_DATA = [
   { month: "T8", apps: 28, users: 65 },
   { month: "T9", apps: 42, users: 80 },
@@ -56,30 +55,30 @@ export default function AdminDashboard() {
 
   const STAT_CARDS = [
     {
-      label: "T?ng ngu?i d�ng",
-      value: userStats?.total ?? "�",
-      sub: `+${userStats?.thisMonth ?? 0} th�ng n�y`,
+      label: "Tổng người dùng",
+      value: userStats?.total ?? "—",
+      sub: `+${userStats?.thisMonth ?? 0} tháng này`,
       icon: Users,
-      color: "#fdd52f",
+      color: "#e4a808",
     },
     {
-      label: "T?ng b�i dang",
-      value: jobStats?.totalJobs ?? "�",
-      sub: `${jobStats?.activeJobs ?? 0} dang ho?t d?ng`,
+      label: "Tổng bài đăng",
+      value: jobStats?.totalJobs ?? "—",
+      sub: `${jobStats?.activeJobs ?? 0} đang hoạt động`,
       icon: Briefcase,
       color: "#e4a808",
     },
     {
-      label: "�on ?ng tuy?n",
-      value: totalApps || "�",
-      sub: `${pendingCount} ch? x�t duy?t`,
+      label: "Đơn ứng tuyển",
+      value: totalApps || "—",
+      sub: `${pendingCount} chờ xét duyệt`,
       icon: ClipboardList,
       color: "#06B6D4",
     },
     {
-      label: "Lu?t xem t?ng",
-      value: jobStats?.totalViews ?? "�",
-      sub: "T?t c? b�i dang",
+      label: "Lượt xem tổng",
+      value: jobStats?.totalViews ?? "—",
+      sub: "Tất cả bài đăng",
       icon: Eye,
       color: "#8B5CF6",
     },
@@ -87,19 +86,19 @@ export default function AdminDashboard() {
 
   const byCountry = [
     {
-      name: "???? �c",
+      name: "🇦🇺 Úc",
       value:
         jobStats?.byCountry?.find((c: any) => c.country === "australia")
           ?.count || 0,
     },
     {
-      name: "???? Canada",
+      name: "🇨🇦 Canada",
       value:
         jobStats?.byCountry?.find((c: any) => c.country === "canada")?.count ||
         0,
     },
     {
-      name: "???? NZ",
+      name: "🇳🇿 NZ",
       value:
         jobStats?.byCountry?.find((c: any) => c.country === "new_zealand")
           ?.count || 0,
@@ -110,14 +109,16 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-7">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-brand-muted text-sm mt-0.5">�ang t?i d? li?u...</p>
+          <h1 className="text-2xl font-bold text-theme-text-base">Dashboard</h1>
+          <p className="text-theme-text-tertiary text-sm mt-0.5">
+            Đang tải dữ liệu...
+          </p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-28 bg-brand-card rounded-2xl animate-pulse border border-brand-border"
+              className="h-28 bg-theme-surface rounded-2xl animate-pulse border border-theme-border-default"
             />
           ))}
         </div>
@@ -127,89 +128,93 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-7">
       <div>
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-brand-muted text-sm mt-0.5">
-          T?ng quan ho?t d?ng h? th?ng
+        <h1 className="text-2xl font-bold text-theme-text-base">Dashboard</h1>
+        <p className="text-theme-text-tertiary text-sm mt-0.5">
+          Tổng quan hoạt động hệ thống
         </p>
       </div>
 
-      {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STAT_CARDS.map((card) => (
-          <div
-            key={card.label}
-            className="card-dark p-5"
-            style={{ background: `linear-gradient(135deg, #141414, #111)` }}
-          >
+          <div key={card.label} className="card-dark p-5">
             <div className="flex items-start justify-between mb-4">
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center"
                 style={{
-                  background: `${card.color}18`,
+                  background: `${card.color}15`,
                   border: `1px solid ${card.color}30`,
                 }}
               >
                 <card.icon size={18} style={{ color: card.color }} />
               </div>
-              <TrendingUp size={13} className="text-green-400 mt-1" />
+              <TrendingUp size={13} className="text-green-500 mt-1" />
             </div>
-            <p className="text-2xl font-bold text-white">{card.value}</p>
-            <p className="text-xs text-white font-medium mt-0.5">
+            <p className="text-2xl font-bold text-theme-text-base">
+              {card.value}
+            </p>
+            <p className="text-xs text-theme-text-secondary font-medium mt-0.5">
               {card.label}
             </p>
-            <p className="text-xs text-brand-muted mt-0.5">{card.sub}</p>
+            <p className="text-xs text-theme-text-tertiary mt-0.5">
+              {card.sub}
+            </p>
           </div>
         ))}
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="card-dark p-5 lg:col-span-2">
-          <h3 className="font-semibold text-white text-sm mb-5">
-            �on ?ng tuy?n & Ngu?i d�ng m?i theo th�ng
+          <h3 className="font-semibold text-theme-text-base text-sm mb-5">
+            Đơn ứng tuyển &amp; Người dùng mới theo tháng
           </h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={MONTHLY_DATA} barGap={4}>
               <XAxis
                 dataKey="month"
-                tick={{ fill: "#6B6B6B", fontSize: 11 }}
+                tick={{ fill: "var(--text-tertiary)", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: "#6B6B6B", fontSize: 11 }}
+                tick={{ fill: "var(--text-tertiary)", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 contentStyle={{
-                  background: "#141414",
-                  border: "1px solid #2A2A2A",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border-default)",
                   borderRadius: "12px",
                   fontSize: 12,
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 }}
-                labelStyle={{ color: "#fff" }}
+                labelStyle={{
+                  color: "var(--text-base)",
+                  fontWeight: 600,
+                  marginBottom: "4px",
+                }}
+                itemStyle={{ color: "var(--text-secondary)" }}
               />
               <Bar
                 dataKey="apps"
-                name="�on ?ng tuy?n"
+                name="Đơn ứng tuyển"
                 fill="#fdd52f"
                 radius={[6, 6, 0, 0]}
               />
               <Bar
                 dataKey="users"
-                name="Ngu?i d�ng m?i"
+                name="Người dùng mới"
                 fill="#e4a808"
                 radius={[6, 6, 0, 0]}
-                opacity={0.7}
+                opacity={0.8}
               />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="card-dark p-5">
-          <h3 className="font-semibold text-white text-sm mb-5">
-            Vi?c l�m theo qu?c gia
+          <h3 className="font-semibold text-theme-text-base text-sm mb-5">
+            Việc làm theo quốc gia
           </h3>
           <ResponsiveContainer width="100%" height={160}>
             <PieChart>
@@ -228,11 +233,13 @@ export default function AdminDashboard() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: "#141414",
-                  border: "1px solid #2A2A2A",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border-default)",
                   borderRadius: "12px",
                   fontSize: 12,
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 }}
+                itemStyle={{ color: "var(--text-base)" }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -247,27 +254,28 @@ export default function AdminDashboard() {
                     className="w-2.5 h-2.5 rounded-full"
                     style={{ background: PIE_COLORS[i] }}
                   />
-                  <span className="text-slate-900">{c.name}</span>
+                  <span className="text-theme-text-secondary">{c.name}</span>
                 </div>
-                <span className="text-white font-semibold">{c.value}</span>
+                <span className="text-theme-text-base font-semibold">
+                  {c.value}
+                </span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Status + Recent apps */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="card-dark p-5">
-          <h3 className="font-semibold text-white text-sm mb-4">
-            Tr?ng th�i don ?ng tuy?n
+          <h3 className="font-semibold text-theme-text-base text-sm mb-4">
+            Trạng thái đơn ứng tuyển
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {appStats.map((item) => (
               <div key={item.status}>
-                <div className="flex justify-between text-xs mb-1">
+                <div className="flex justify-between items-center text-xs mb-1.5">
                   <span
-                    className={`px-2 py-0.5 rounded-full border text-xs font-medium ${APP_STATUS_LABELS[item.status as keyof typeof APP_STATUS_LABELS]?.color}`}
+                    className={`px-2.5 py-1 rounded-full border text-xs font-medium ${APP_STATUS_LABELS[item.status as keyof typeof APP_STATUS_LABELS]?.color} bg-theme-surface`}
                   >
                     {
                       APP_STATUS_LABELS[
@@ -275,11 +283,13 @@ export default function AdminDashboard() {
                       ]?.label
                     }
                   </span>
-                  <span className="text-white font-semibold">{item.count}</span>
+                  <span className="text-theme-text-base font-semibold">
+                    {item.count}
+                  </span>
                 </div>
-                <div className="h-1.5 bg-brand-dark rounded-full overflow-hidden">
+                <div className="h-1.5 bg-theme-surfaceSecondary rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-brand-gold to-brand-orange"
+                    className="h-full rounded-full bg-gradient-to-r from-brand-gold-primary to-brand-orange-primary"
                     style={{
                       width: `${totalApps ? (parseInt(item.count) / totalApps) * 100 : 0}%`,
                     }}
@@ -292,53 +302,53 @@ export default function AdminDashboard() {
 
         <div className="card-dark p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-white text-sm">
-              �on ?ng tuy?n g?n d�y
+            <h3 className="font-semibold text-theme-text-base text-sm">
+              Đơn ứng tuyển gần đây
             </h3>
             <Link
               to="/admin/applications"
-              className="text-xs text-brand-gold hover:text-brand-orange transition-colors"
+              className="text-xs text-brand-gold-primary hover:text-brand-orange-primary font-medium transition-colors"
             >
-              Xem t?t c? ?
+              Xem tất cả →
             </Link>
           </div>
           <div className="space-y-2">
             {recentApps.map((app) => (
               <div
                 key={app.id}
-                className="flex items-center gap-3 p-3 bg-brand-dark rounded-xl hover:bg-white/5 transition-colors"
+                className="flex items-center gap-3 p-3 bg-theme-background border border-theme-border-default rounded-xl hover:bg-theme-surfaceSecondary transition-colors"
               >
                 <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-900 text-xs font-bold shrink-0"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-900 text-xs font-bold shrink-0 shadow-sm"
                   style={{
-                    background: "linear-gradient(135deg,#e4a808,#fdd52f)",
+                    background: "linear-gradient(135deg,#fdd52f,#e4a808)",
                   }}
                 >
                   {app.fullName.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">
+                  <p className="text-theme-text-base text-sm font-medium truncate">
                     {app.fullName}
                   </p>
-                  <p className="text-brand-muted text-xs truncate">
+                  <p className="text-theme-text-tertiary text-xs truncate mt-0.5">
                     {app.job?.title}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full border font-medium ${APP_STATUS_LABELS[app.status]?.color}`}
+                    className={`text-xs px-2.5 py-1 rounded-full border font-medium bg-theme-surface ${APP_STATUS_LABELS[app.status]?.color}`}
                   >
                     {APP_STATUS_LABELS[app.status]?.label}
                   </span>
-                  <p className="text-brand-muted text-xs mt-0.5">
+                  <p className="text-theme-text-tertiary text-xs mt-1.5">
                     {formatDate(app.createdAt)}
                   </p>
                 </div>
               </div>
             ))}
             {recentApps.length === 0 && (
-              <p className="text-center text-brand-muted text-sm py-8">
-                Chua c� don ?ng tuy?n n�o
+              <p className="text-center text-theme-text-tertiary text-sm py-8">
+                Chưa có đơn ứng tuyển nào
               </p>
             )}
           </div>

@@ -83,29 +83,29 @@ export default function AdminContactsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Quản lý liên hệ</h1>
-          <p className="text-brand-muted text-sm mt-0.5">
+          <h1 className="text-2xl font-bold text-theme-text-base">
+            Quản lý liên hệ
+          </h1>
+          <p className="text-theme-text-tertiary text-sm mt-0.5">
             {contacts.length} liên hệ
             {unreadCount > 0 && (
-              <span className="ml-2 text-brand-gold font-medium">
+              <span className="ml-2 text-brand-gold-primary font-medium">
                 · {unreadCount} chưa đọc
               </span>
             )}
           </p>
         </div>
-        {/* Filter tabs */}
-        <div className="flex items-center gap-1 bg-brand-card border border-brand-border rounded-xl p-1">
+        <div className="flex items-center gap-1 bg-theme-surface border border-theme-border-default rounded-xl p-1">
           {(["all", "unread", "read"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 filter === f
-                  ? "bg-brand-gold text-white"
-                  : "text-brand-muted hover:text-white"
+                  ? "bg-brand-gold-primary text-slate-900"
+                  : "text-theme-text-tertiary hover:text-theme-text-base hover:bg-theme-surfaceSecondary"
               }`}
             >
               {f === "all" ? "Tất cả" : f === "unread" ? "Chưa đọc" : "Đã đọc"}
@@ -115,38 +115,38 @@ export default function AdminContactsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* List */}
         <div className="space-y-2">
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="h-20 bg-brand-card rounded-2xl animate-pulse"
+                className="h-20 bg-theme-surface rounded-2xl animate-pulse border border-theme-border-default"
               />
             ))
           ) : filtered.length === 0 ? (
-            <div className="bg-brand-card border border-brand-border rounded-2xl p-10 text-center">
+            <div className="bg-theme-surface border border-theme-border-default rounded-2xl p-10 text-center">
               <p className="text-3xl mb-2">📭</p>
-              <p className="text-brand-muted text-sm">Không có liên hệ nào</p>
+              <p className="text-theme-text-tertiary text-sm">
+                Không có liên hệ nào
+              </p>
             </div>
           ) : (
             filtered.map((c) => (
               <div
                 key={c.id}
                 onClick={() => openDetail(c)}
-                className={`bg-brand-card border rounded-2xl p-4 cursor-pointer transition-all hover:border-brand-gold/30 ${
+                className={`bg-theme-surface border rounded-2xl p-4 cursor-pointer transition-all hover:border-brand-gold-primary/30 ${
                   selected?.id === c.id
-                    ? "border-brand-gold/40 bg-brand-gold/5"
+                    ? "border-brand-gold-primary/40 bg-brand-gold-primary/5"
                     : c.isRead
-                      ? "border-brand-border"
-                      : "border-brand-gold/20 bg-brand-gold/[0.03]"
+                      ? "border-theme-border-default"
+                      : "border-brand-gold-primary/20 bg-brand-gold-primary/[0.02]"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
-                    {/* Avatar */}
                     <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-900 font-bold text-sm shrink-0"
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-900 font-bold text-sm shrink-0 shadow-sm"
                       style={{
                         background: "linear-gradient(135deg,#e4a808,#fdd52f)",
                       }}
@@ -155,34 +155,34 @@ export default function AdminContactsPage() {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-white text-sm font-medium truncate">
+                        <p className="text-theme-text-base text-sm font-medium truncate">
                           {c.name}
                         </p>
                         {!c.isRead && (
-                          <span className="w-2 h-2 rounded-full bg-brand-gold shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-brand-gold-primary shrink-0" />
                         )}
                       </div>
-                      <p className="text-brand-muted text-xs truncate">
+                      <p className="text-theme-text-secondary text-xs truncate">
                         {c.email}
                       </p>
-                      <p className="text-brand-muted text-xs mt-1 line-clamp-1">
+                      <p className="text-theme-text-tertiary text-xs mt-1 line-clamp-1">
                         {c.message}
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-brand-muted text-[10px]">
+                    <p className="text-theme-text-tertiary text-[10px]">
                       {formatDate(c.createdAt)}
                     </p>
                     {c.isRead ? (
                       <CheckCircle
                         size={12}
-                        className="text-green-400 ml-auto mt-1"
+                        className="text-green-500 ml-auto mt-1"
                       />
                     ) : (
                       <Mail
                         size={12}
-                        className="text-brand-gold ml-auto mt-1"
+                        className="text-brand-gold-primary ml-auto mt-1"
                       />
                     )}
                   </div>
@@ -192,97 +192,95 @@ export default function AdminContactsPage() {
           )}
         </div>
 
-        {/* Detail panel */}
-        <div className="bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
+        <div className="bg-theme-surface border border-theme-border-default rounded-2xl overflow-hidden">
           {!selected ? (
             <div className="h-full flex flex-col items-center justify-center p-10 text-center min-h-[300px]">
-              <Mail size={32} className="text-brand-muted mb-3" />
-              <p className="text-brand-muted text-sm">
+              <Mail size={32} className="text-theme-text-tertiary mb-3" />
+              <p className="text-theme-text-tertiary text-sm">
                 Chọn một liên hệ để xem chi tiết
               </p>
             </div>
           ) : (
             <>
-              {/* Detail header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-brand-border">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-theme-border-default bg-theme-surfaceSecondary/30">
                 <div className="flex items-center gap-2">
-                  <Eye size={15} className="text-brand-gold" />
-                  <span className="text-white font-semibold text-sm">
+                  <Eye size={15} className="text-brand-gold-primary" />
+                  <span className="text-theme-text-base font-semibold text-sm">
                     Chi tiết liên hệ
                   </span>
                   {selected.isRead && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
                       Đã đọc
                     </span>
                   )}
                 </div>
                 <button
                   onClick={() => setSelected(null)}
-                  className="text-brand-muted hover:text-white"
+                  className="text-theme-text-tertiary hover:text-theme-text-base"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              {/* Detail body */}
               <div className="p-5 space-y-4">
-                {/* Sender info */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-brand-dark rounded-xl p-3">
+                  <div className="bg-theme-background border border-theme-border-default rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <User size={11} className="text-brand-muted" />
-                      <span className="text-[10px] text-brand-muted">
+                      <User size={11} className="text-theme-text-tertiary" />
+                      <span className="text-[10px] text-theme-text-tertiary">
                         Họ tên
                       </span>
                     </div>
-                    <p className="text-white text-sm font-medium">
+                    <p className="text-theme-text-base text-sm font-medium">
                       {selected.name}
                     </p>
                   </div>
-                  <div className="bg-brand-dark rounded-xl p-3">
+                  <div className="bg-theme-background border border-theme-border-default rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Mail size={11} className="text-brand-muted" />
-                      <span className="text-[10px] text-brand-muted">
+                      <Mail size={11} className="text-theme-text-tertiary" />
+                      <span className="text-[10px] text-theme-text-tertiary">
                         Email
                       </span>
                     </div>
-                    <p className="text-white text-sm truncate">
+                    <p className="text-theme-text-base text-sm truncate">
                       {selected.email}
                     </p>
                   </div>
                   {selected.phone && (
-                    <div className="bg-brand-dark rounded-xl p-3">
+                    <div className="bg-theme-background border border-theme-border-default rounded-xl p-3">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <Phone size={11} className="text-brand-muted" />
-                        <span className="text-[10px] text-brand-muted">
+                        <Phone size={11} className="text-theme-text-tertiary" />
+                        <span className="text-[10px] text-theme-text-tertiary">
                           Điện thoại
                         </span>
                       </div>
-                      <p className="text-white text-sm">{selected.phone}</p>
+                      <p className="text-theme-text-base text-sm">
+                        {selected.phone}
+                      </p>
                     </div>
                   )}
-                  <div className="bg-brand-dark rounded-xl p-3">
+                  <div className="bg-theme-background border border-theme-border-default rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Clock size={11} className="text-brand-muted" />
-                      <span className="text-[10px] text-brand-muted">
+                      <Clock size={11} className="text-theme-text-tertiary" />
+                      <span className="text-[10px] text-theme-text-tertiary">
                         Thời gian
                       </span>
                     </div>
-                    <p className="text-white text-sm">
+                    <p className="text-theme-text-base text-sm">
                       {formatDate(selected.createdAt)}
                     </p>
                   </div>
                 </div>
 
-                {/* Message */}
-                <div className="bg-brand-dark rounded-xl p-4">
-                  <p className="text-[10px] text-brand-muted mb-2">Nội dung</p>
-                  <p className="text-white text-sm leading-relaxed whitespace-pre-wrap">
+                <div className="bg-theme-background border border-theme-border-default rounded-xl p-4">
+                  <p className="text-[10px] text-theme-text-tertiary mb-2">
+                    Nội dung
+                  </p>
+                  <p className="text-theme-text-secondary text-sm leading-relaxed whitespace-pre-wrap">
                     {selected.message}
                   </p>
                 </div>
 
-                {/* Actions */}
                 <div className="flex gap-3">
                   <a
                     href={`mailto:${selected.email}`}
@@ -292,7 +290,7 @@ export default function AdminContactsPage() {
                   </a>
                   <button
                     onClick={() => setDeleting(selected.id)}
-                    className="px-4 py-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 text-sm transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-xl border border-red-500/30 text-red-500 hover:bg-red-500/10 text-sm transition-colors flex items-center gap-1.5"
                   >
                     <Trash2 size={14} /> Xóa
                   </button>
@@ -303,24 +301,25 @@ export default function AdminContactsPage() {
         </div>
       </div>
 
-      {/* Delete confirm */}
       {deleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-brand-card border border-brand-border rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <p className="text-white font-semibold mb-2">Xác nhận xóa</p>
-            <p className="text-brand-muted text-sm mb-5">
+          <div className="bg-theme-surface border border-theme-border-default rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <p className="text-theme-text-base font-semibold mb-2">
+              Xác nhận xóa
+            </p>
+            <p className="text-theme-text-tertiary text-sm mb-5">
               Bạn chắc chắn muốn xóa liên hệ này?
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 px-4 py-2 rounded-xl border border-brand-border text-sm text-brand-muted hover:text-white transition-colors"
+                className="flex-1 px-4 py-2 rounded-xl border border-theme-border-default text-sm text-theme-text-tertiary hover:text-theme-text-base transition-colors"
               >
                 Hủy
               </button>
               <button
                 onClick={() => handleDelete(deleting)}
-                className="flex-1 px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 text-sm hover:bg-red-500/30 transition-colors"
+                className="flex-1 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm hover:bg-red-500/20 transition-colors"
               >
                 Xóa
               </button>

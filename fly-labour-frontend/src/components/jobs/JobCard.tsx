@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom";
-import { MapPin, Clock, Users, TrendingUp, Eye, Star, Flame, TimerOff } from "lucide-react";
+import {
+  MapPin,
+  Clock,
+  Users,
+  TrendingUp,
+  Eye,
+  Star,
+  Flame,
+  TimerOff,
+} from "lucide-react";
 import type { Job } from "@/types";
 import {
   getCountryLabels,
@@ -105,12 +114,14 @@ export default function JobCard({ job, compact }: Props) {
             )}
             {!expired && job.isHot && (
               <span className="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-[0_2px_8px_rgba(239,68,68,0.45)] border border-red-400/30">
-                <Flame size={9} className="fill-yellow-300 text-yellow-300" /> HOT
+                <Flame size={9} className="fill-yellow-300 text-yellow-300" />{" "}
+                HOT
               </span>
             )}
             {!expired && job.isFeatured && (
               <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-900 shadow-[0_2px_8px_rgba(251,191,36,0.4)] border border-yellow-300/50">
-                <Star size={9} className="fill-amber-800 text-amber-800" /> {jc.featured}
+                <Star size={9} className="fill-amber-800 text-amber-800" />{" "}
+                {jc.featured}
               </span>
             )}
           </div>
@@ -144,7 +155,8 @@ export default function JobCard({ job, compact }: Props) {
             )}
             {!expired && job.isHot && (
               <span className="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-[0_2px_8px_rgba(239,68,68,0.4)] border border-red-400/30">
-                <Flame size={9} className="fill-yellow-300 text-yellow-300" /> HOT
+                <Flame size={9} className="fill-yellow-300 text-yellow-300" />{" "}
+                HOT
               </span>
             )}
             <span className="badge-country text-[10px]">
