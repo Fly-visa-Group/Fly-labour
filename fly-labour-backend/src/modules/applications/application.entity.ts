@@ -58,7 +58,7 @@ export class Application {
   @Column({ nullable: true })
   userId: string
 
-  @ManyToOne(() => Job, { eager: true })
+  @ManyToOne(() => Job, { eager: false })
   @JoinColumn({ name: 'jobId' })
   job: Job
 

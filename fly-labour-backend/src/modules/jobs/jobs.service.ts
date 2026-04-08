@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Job, JobStatus } from './job.entity';
 import { CreateJobDto, UpdateJobDto, QueryJobDto } from './dto/job.dto';
 import { GcsService } from '../../common/services/gcs.service';
+import { PAGINATION } from '../../common/constants';
 
 @Injectable()
 export class JobsService {
@@ -13,7 +14,8 @@ export class JobsService {
   ) {}
 
   async findAll(query: QueryJobDto) {
-    const { page = 1, limit = 12, search, country, categoryId, jobType, isHot, isFeatured, sort } = query;
+    const { page = 1, search, country, categoryId, jobType, isHot, isFeatured, sort } = query;
+    const limit = Math.min(query.limit ?? 12, PAGINATION.MAX_LIMIT);
 
     const qb = this.jobsRepo.createQueryBuilder('job')
       .leftJoinAndSelect('job.category', 'category')
@@ -65,7 +67,8 @@ export class JobsService {
 
   // Admin: all jobs including draft/paused
   async findAllAdmin(query: QueryJobDto) {
-    const { page = 1, limit = 20, search } = query;
+    const { page = 1, search } = query;
+    const limit = Math.min(query.limit ?? PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT);
     const qb = this.jobsRepo.createQueryBuilder('job')
       .leftJoinAndSelect('job.category', 'category')
       .leftJoinAndSelect('job.createdBy', 'createdBy');
@@ -90,7 +93,13 @@ export class JobsService {
   async findOne(id: string) {
     const job = await this.jobsRepo.findOne({ where: { id }, relations: ['category'] });
     if (!job) throw new NotFoundException('Job not found');
-    await this.jobsRepo.increment({ id }, 'viewCount', 1);
+    // Atomic increment — không cần round-trip thứ hai
+    this.jobsRepo.createQueryBuilder()
+      .update(Job)
+      .set({ viewCount: () => '"viewCount" + 1' })
+      .where('id = :id', { id })
+      .execute()
+      .catch(() => { /* non-critical, swallow */ });
     return job;
   }
 
@@ -115,7 +124,8 @@ export class JobsService {
 
   // ── Employer methods ──────────────────────────────────
   async findByEmployer(employerId: string, query: QueryJobDto) {
-    const { page = 1, limit = 20 } = query;
+    const { page = 1 } = query;
+    const limit = Math.min(query.limit ?? PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT);
     const qb = this.jobsRepo.createQueryBuilder('job')
       .leftJoinAndSelect('job.category', 'category')
       .where('job.createdById = :employerId', { employerId })
@@ -169,21 +179,28 @@ export class JobsService {
   }
 
   async getStats() {
-    const [totalJobs, activeJobs, totalUsers] = await Promise.all([
-      this.jobsRepo.count(),
-      this.jobsRepo.count({ where: { status: JobStatus.ACTIVE } }),
-      this.jobsRepo.query('SELECT COUNT(*) FROM users'),
+    // Gộp job stats + users count + byCountry thành 2 query thay vì 4-5
+    const [jobStats, byCountry] = await Promise.all([
+      this.jobsRepo
+        .createQueryBuilder('job')
+        .select('COUNT(*)', 'totalJobs')
+        .addSelect(`COUNT(*) FILTER (WHERE job.status = '${JobStatus.ACTIVE}')`, 'activeJobs')
+        .addSelect('COALESCE(SUM(job.viewCount), 0)', 'totalViews')
+        .addSelect('(SELECT COUNT(*) FROM users)', 'totalUsers')
+        .getRawOne(),
+      this.jobsRepo
+        .createQueryBuilder('job')
+        .select('job.country', 'country')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('job.country')
+        .getRawMany(),
     ]);
-    const totalViews = await this.jobsRepo
-      .createQueryBuilder('job').select('SUM(job.viewCount)', 'total').getRawOne();
-    const byCountry = await this.jobsRepo
-      .createQueryBuilder('job').select('job.country', 'country').addSelect('COUNT(*)', 'count')
-      .groupBy('job.country').getRawMany();
+
     return {
-      totalJobs,
-      activeJobs,
-      totalUsers: parseInt(totalUsers[0]?.count || '0'),
-      totalViews: parseInt(totalViews?.total || '0'),
+      totalJobs: parseInt(jobStats?.totalJobs || '0'),
+      activeJobs: parseInt(jobStats?.activeJobs || '0'),
+      totalViews: parseInt(jobStats?.totalViews || '0'),
+      totalUsers: parseInt(jobStats?.totalUsers || '0'),
       byCountry,
     };
   }

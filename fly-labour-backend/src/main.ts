@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core'
-import { ValidationPipe } from '@nestjs/common'
+import { ValidationPipe, Logger } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { join } from 'path'
 import { NestExpressApplication } from '@nestjs/platform-express'
+
+const logger = new Logger('Bootstrap')
 
 async function bootstrap() {
   let app: NestExpressApplication
@@ -15,26 +17,27 @@ async function bootstrap() {
     process.exit(1)
   }
 
-  // CORS — cho phép frontend localhost, Railway và production domains
+  // CORS — cho phép frontend localhost (dev) và production domains
+  const frontendUrl = process.env.FRONTEND_URL
+  if (!frontendUrl) logger.warn('FRONTEND_URL not set — production CORS may be too permissive')
+
   const allowedOrigins = [
-    'http://localhost',
-    'https://flylabour.up.railway.app',
-    'http://localhost:80',
+    // Dev
     'http://localhost:5173',
     'http://localhost:5174',
+    'http://127.0.0.1:5173',
     'http://127.0.0.1:5174',
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'http://localhost:3005',
+    // Mobile dev (Expo)
     'http://localhost:8081',
     'http://localhost:8082',
-    'http://127.0.0.1:8082',
-    'http://127.0.0.1:5173',
     'http://127.0.0.1:8081',
+    'http://127.0.0.1:8082',
+    // Production
+    'https://flylabour.up.railway.app',
     'https://flyimmigration.vn',
     'https://www.flyimmigration.vn',
-    process.env.FRONTEND_URL,
-  ].filter(Boolean)
+    frontendUrl,
+  ].filter(Boolean) as string[]
 
   app!.enableCors({
     origin: (origin, callback) => {

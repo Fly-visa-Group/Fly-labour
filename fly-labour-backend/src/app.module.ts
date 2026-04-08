@@ -53,12 +53,15 @@ const logger = new Logger('TypeORM')
         }
 
         // Cấu hình fallback cho Local (Docker/Localhost)
+        const host = cfg.get<string>('DB_HOST', 'localhost')
+        const password = cfg.get<string>('DB_PASSWORD')
+        if (!password) logger.warn('DB_PASSWORD not set — using default "123456" (development only)')
         return {
           type: 'postgres',
-          host: cfg.get<string>('DB_HOST', 'localhost'),
+          host,
           port: cfg.get<number>('DB_PORT', 5432),
           username: cfg.get<string>('DB_USERNAME', 'postgres'),
-          password: cfg.get<string>('DB_PASSWORD', '123456'),
+          password: password ?? '123456',
           database: cfg.get<string>('DB_NAME', 'fly_labour'),
           entities: [join(__dirname, '**', '*.entity{.ts,.js}')],
           synchronize: true,

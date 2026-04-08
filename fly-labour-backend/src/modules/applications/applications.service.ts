@@ -4,6 +4,7 @@ import { Repository } from 'typeorm'
 import { Application, ApplicationStatus } from './application.entity'
 import { IsString, IsEmail, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { PAGINATION } from '../../common/constants'
 
 export class CreateApplicationDto {
   @ApiProperty() @IsString() fullName: string
@@ -39,7 +40,8 @@ export class ApplicationsService {
   }
 
   async findAll(query: { page?: number; limit?: number; status?: string; jobId?: string }) {
-    const { page = 1, limit = 20, status, jobId } = query
+    const { page = 1, status, jobId } = query
+    const limit = Math.min(query.limit ?? PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT)
     const qb = this.appsRepo.createQueryBuilder('app')
       .leftJoinAndSelect('app.job', 'job')
       .leftJoinAndSelect('app.user', 'user')

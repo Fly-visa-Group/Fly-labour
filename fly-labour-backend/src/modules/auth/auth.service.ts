@@ -20,11 +20,10 @@ export class AuthService {
 
     const hashed = await bcrypt.hash(dto.password, 12)
     
-    // Đã fix lỗi TypeScript: Ép kiểu dto.role sang UserRole
-    const user = this.usersRepo.create({ 
-      ...dto, 
+    const user = this.usersRepo.create({
+      ...dto,
       password: hashed,
-      role: dto.role as unknown as UserRole 
+      role: dto.role ?? UserRole.USER,
     })
     
     await this.usersRepo.save(user)

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm'
 import { Category } from '../categories/category.entity'
 import { User } from '../users/user.entity'
 
@@ -28,12 +28,14 @@ export class Job {
   @Column({ nullable: true })
   location: string
 
+  @Index()
   @Column({ type: 'varchar', length: 100, nullable: true, default: 'australia' })
   country: string
 
   @Column({ type: 'enum', enum: JobType, default: JobType.FULL_TIME })
   jobType: JobType
 
+  @Index()
   @Column({ type: 'enum', enum: JobStatus, default: JobStatus.ACTIVE })
   status: JobStatus
 
@@ -58,27 +60,31 @@ export class Job {
   @Column({ type: 'simple-json', nullable: true })
   images: string[]
 
+  @Index()
   @Column({ default: false })
   isHot: boolean
 
+  @Index()
   @Column({ default: false })
   isFeatured: boolean
 
   @Column({ default: 0 })
   viewCount: number
 
-  @ManyToOne(() => Category, { nullable: true, eager: true })
+  @ManyToOne(() => Category, { nullable: true, eager: false })
   @JoinColumn({ name: 'categoryId' })
   category: Category
 
+  @Index()
   @Column({ nullable: true })
   categoryId: string
 
   // Employer who created this job (null = created by admin)
-  @ManyToOne(() => User, { nullable: true, eager: false })
+  @ManyToOne(() => User, { nullable: true, eager: false, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User
 
+  @Index()
   @Column({ nullable: true })
   createdById: string
 

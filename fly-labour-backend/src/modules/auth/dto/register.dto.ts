@@ -1,4 +1,5 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsIn } from 'class-validator'
+import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator'
+import { UserRole } from '../../users/user.entity'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class RegisterDto {
@@ -24,11 +25,10 @@ export class RegisterDto {
   @IsOptional()
   address?: string
 
-  @ApiProperty({ required: false, enum: ['user', 'employer'], description: 'Account type: job seeker or employer' })
-  @IsString()
+  @ApiProperty({ required: false, enum: [UserRole.USER, UserRole.EMPLOYER], description: 'Account type: job seeker or employer' })
+  @IsEnum([UserRole.USER, UserRole.EMPLOYER], { message: 'role must be user or employer' })
   @IsOptional()
-  @IsIn(['user', 'employer'])
-  role?: string
+  role?: UserRole
 
   @ApiProperty({ required: false })
   @IsString()

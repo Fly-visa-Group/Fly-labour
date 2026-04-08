@@ -1,7 +1,7 @@
 import {
   Controller, Get, Post, Patch, Delete,
   Body, Param, Query, UseGuards, Request,
-  UseInterceptors, UploadedFile
+  UseInterceptors, UploadedFile, BadRequestException, HttpCode
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes } from '@nestjs/swagger'
@@ -11,6 +11,18 @@ import { CreateJobDto, UpdateJobDto, QueryJobDto } from './dto/job.dto'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { AdminGuard } from '../../common/guards/admin.guard'
 import { EmployerGuard } from '../../common/guards/employer.guard'
+import { FILE_UPLOAD } from '../../common/constants'
+
+const imageUploadInterceptor = FileInterceptor('image', {
+  storage: memoryStorage(),
+  limits: { fileSize: FILE_UPLOAD.MAX_SIZE_BYTES },
+  fileFilter: (_req, file, cb) => {
+    if (!FILE_UPLOAD.ALLOWED_MIME_TYPES.includes(file.mimetype as any)) {
+      return cb(new BadRequestException(`Chỉ chấp nhận file ảnh (${FILE_UPLOAD.ALLOWED_MIME_TYPES.join(', ')})`), false)
+    }
+    cb(null, true)
+  },
+})
 
 @ApiTags('💼 Jobs')
 @Controller('jobs')
@@ -48,9 +60,10 @@ export class JobsController {
   @Post('employer')
   @UseGuards(JwtAuthGuard, EmployerGuard)
   @ApiBearerAuth('JWT')
+  @HttpCode(201)
   @ApiOperation({ summary: '[Employer] Create job listing' })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  @UseInterceptors(imageUploadInterceptor)
   createByEmployer(@Body() dto: CreateJobDto, @Request() req: any, @UploadedFile() file?: Express.Multer.File) {
     return this.jobsService.createByEmployer(dto, req.user.id, file)
   }
@@ -60,7 +73,7 @@ export class JobsController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: '[Employer] Update own job listing' })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  @UseInterceptors(imageUploadInterceptor)
   updateByEmployer(
     @Param('id') id: string,
     @Body() dto: UpdateJobDto,
@@ -73,6 +86,7 @@ export class JobsController {
   @Delete('employer/:id')
   @UseGuards(JwtAuthGuard, EmployerGuard)
   @ApiBearerAuth('JWT')
+  @HttpCode(200)
   @ApiOperation({ summary: '[Employer] Delete own job listing' })
   deleteByEmployer(@Param('id') id: string, @Request() req: any) {
     return this.jobsService.deleteByEmployer(id, req.user.id)
@@ -122,9 +136,10 @@ export class JobsController {
   @Post()
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth('JWT')
+  @HttpCode(201)
   @ApiOperation({ summary: '[Admin] Create job listing' })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  @UseInterceptors(imageUploadInterceptor)
   create(@Body() dto: CreateJobDto, @UploadedFile() file?: Express.Multer.File) {
     return this.jobsService.create(dto, file)
   }
@@ -134,7 +149,7 @@ export class JobsController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: '[Admin] Update job listing' })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  @UseInterceptors(imageUploadInterceptor)
   update(@Param('id') id: string, @Body() dto: UpdateJobDto, @UploadedFile() file?: Express.Multer.File) {
     return this.jobsService.update(id, dto, file)
   }

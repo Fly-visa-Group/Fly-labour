@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcryptjs'
 import { User } from './user.entity'
+import { PAGINATION } from '../../common/constants'
 
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
 
   async findAll(query: { page?: number; limit?: number; search?: string }) {
-    const { page = 1, limit = 20, search } = query
+    const { page = 1, search } = query
+    const limit = Math.min(query.limit ?? PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT)
     const qb = this.usersRepo.createQueryBuilder('user').orderBy('user.createdAt', 'DESC')
     if (search) {
       qb.where('(user.fullName ILIKE :s OR user.email ILIKE :s)', { s: `%${search}%` })
