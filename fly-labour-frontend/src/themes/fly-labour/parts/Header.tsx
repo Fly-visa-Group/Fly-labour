@@ -72,28 +72,12 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-300 shadow-sm"
-              style={{
-                background: "linear-gradient(135deg, #e4a808, #fdd52f)",
-              }}
-            >
-              <span className="text-amber-900 font-display text-lg font-black tracking-tighter">
-                FI
-              </span>
-            </div>
-            <div className="flex flex-col leading-none justify-center mt-0.5">
-              <span className="font-display text-[1.3rem] font-bold text-slate-900 dark:text-white tracking-wide">
-                FLY
-              </span>
-              <span
-                className="font-display text-[0.8rem] font-bold tracking-widest uppercase"
-                style={{ color: "#e4a808" }}
-              >
-                Immigration
-              </span>
-            </div>
+          <Link to="/" className="flex items-center shrink-0">
+            <img
+              src="/logo.png"
+              alt="Fly Immigration"
+              className="h-12 md:h-14 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Nav */}

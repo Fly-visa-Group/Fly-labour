@@ -64,21 +64,12 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Brand */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center shadow-sm"
-              style={{ background: "linear-gradient(135deg,#e4a808,#fdd52f)" }}
-            >
-              <span className="text-amber-900 font-display text-base font-black">
-                FL
-              </span>
-            </div>
-            <span className="font-display text-xl font-black tracking-wider text-slate-900 dark:text-white transition-colors">
-              FLY{" "}
-              <span className="text-amber-500 dark:text-brand-gold">
-                LABOUR
-              </span>
-            </span>
+          <div className="mb-4">
+            <img
+              src="/logo.png"
+              alt="Fly Immigration"
+              className="h-14 w-auto object-contain"
+            />
           </div>
           <p className="text-slate-500 dark:text-brand-muted text-sm leading-relaxed transition-colors">
             {f.tagline}
