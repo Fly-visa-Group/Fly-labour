@@ -369,36 +369,39 @@ export default function JobDetailPage() {
               return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Yêu cầu công việc block */}
-                  <div className={`${cardClasses} flex flex-col`}>
-                    <div className="p-4 bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
-                      <h3 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">YÊU CẦU CÔNG VIỆC</h3>
+                  <div className="bg-white dark:bg-[#131926] rounded-3xl border border-slate-100 dark:border-white/5 overflow-hidden shadow-sm group">
+                    <div className="bg-slate-50 dark:bg-black/20 px-8 py-6 border-b border-slate-100 dark:border-white/5">
+                      <h3 className="font-black text-xl text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-3">
+                        <span className="w-1.5 h-6 bg-brand-gold rounded-full"></span>
+                        Yêu cầu công việc
+                      </h3>
                     </div>
-                    <div className="p-0 flex-1">
-                      <table className="w-full text-xs">
-                        <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                    <div className="p-2">
+                      <table className="w-full border-collapse">
+                        <tbody className="divide-y divide-slate-50 dark:divide-white/5">
                           {[
-                            { label: "ĐỘ TUỔI", value: structReq?.age },
-                            { label: "THỜI GIAN LÀM VIỆC", value: structReq?.workTime },
-                            { label: "KINH NGHIỆM", value: structReq?.experience },
-                            { label: "NGOẠI NGỮ", value: structReq?.language },
+                            { label: "Độ tuổi", value: structReq?.age },
+                            { label: "Thời gian làm việc", value: structReq?.workTime },
+                            { label: "Kinh nghiệm", value: structReq?.experience },
+                            { label: "Ngoại ngữ", value: structReq?.language },
                           ].map((row, idx) => (
-                            <tr key={idx} className="group">
-                              <td className="w-1/3 p-4 font-bold text-slate-400 dark:text-brand-muted bg-slate-50/50 dark:bg-black/10 group-hover:bg-slate-100 dark:group-hover:bg-white/5 transition-colors">{row.label}</td>
-                              <td className="p-4 text-slate-700 dark:text-white font-medium group-hover:bg-slate-50 dark:group-hover:bg-white/5 transition-colors">{row.value || "—"}</td>
+                            <tr key={idx} className="group/row transition-colors">
+                              <td className="w-1/3 p-5 font-bold text-xs uppercase tracking-widest text-slate-400 dark:text-brand-muted bg-slate-50/30 dark:bg-black/10 group-hover/row:bg-slate-50 dark:group-hover/row:bg-white/5 transition-colors">{row.label}</td>
+                              <td className="p-5 text-base text-slate-700 dark:text-white font-medium group-hover/row:bg-slate-50 dark:group-hover/row:bg-white/5 transition-colors">{row.value || "—"}</td>
                             </tr>
                           ))}
                           {structReq?.transport && (
-                            <tr>
-                              <td className="p-4 font-bold text-slate-400 dark:text-brand-muted bg-slate-50/50 dark:bg-black/10">PHƯƠNG TIỆN</td>
-                              <td className="p-4 text-slate-700 dark:text-gray-300 font-medium">{structReq.transport}</td>
+                            <tr className="group/row">
+                              <td className="p-5 font-bold text-xs uppercase tracking-widest text-slate-400 dark:text-brand-muted bg-slate-50/30 dark:bg-black/10 group-hover/row:bg-slate-50 dark:group-hover/row:bg-white/5 transition-colors">Phương tiện</td>
+                              <td className="p-5 text-base text-slate-700 dark:text-gray-200 font-medium group-hover/row:bg-slate-50 dark:group-hover/row:bg-white/5 transition-colors">{structReq.transport}</td>
                             </tr>
                           )}
                           <tr>
-                            <td className="p-4 font-bold text-slate-400 dark:text-brand-muted bg-slate-50/50 dark:bg-black/10">YÊU CẦU KHÁC</td>
-                            <td className="p-4">
-                              <div className="space-y-2">
+                            <td className="p-5 font-bold text-xs uppercase tracking-widest text-slate-400 dark:text-brand-muted bg-slate-50/30 dark:bg-black/10">Yêu cầu khác</td>
+                            <td className="p-5">
+                              <div className="space-y-4">
                                 {structReq?.other && (
-                                  <p className="text-slate-700 dark:text-gray-300 mb-3 whitespace-pre-line">{structReq.other}</p>
+                                  <p className="text-base text-slate-700 dark:text-gray-300 mb-4 whitespace-pre-line leading-relaxed">{structReq.other}</p>
                                 )}
                                 {structReq?.checklist?.map((item: string) => (
                                   <div key={item} className="flex items-center gap-2 text-slate-600 dark:text-gray-400">
@@ -420,20 +423,28 @@ export default function JobDetailPage() {
                   </div>
 
                   {/* Quyền lợi block */}
-                  <div className={`${cardClasses} flex flex-col`}>
-                    <div className="p-4 bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
-                      <h3 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">QUYỀN LỢI ĐÃI NGỘ</h3>
+                  <div className="bg-white dark:bg-[#131926] rounded-3xl border border-slate-100 dark:border-white/5 overflow-hidden shadow-sm group">
+                    <div className="bg-slate-50 dark:bg-black/20 px-8 py-6 border-b border-slate-100 dark:border-white/5">
+                      <h3 className="font-black text-xl text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-3">
+                        <span className="w-1.5 h-6 bg-brand-gold rounded-full"></span>
+                        Quyền lợi đãi ngộ
+                      </h3>
                     </div>
-                    <div className="p-0 flex-1">
-                      <table className="w-full text-xs">
-                        <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                    <div className="p-2">
+                      <table className="w-full border-collapse">
+                        <tbody className="divide-y divide-slate-50 dark:divide-white/5">
+                          {structBen?.departure && (
+                            <tr className="group/row">
+                              <td className="w-1/3 p-5 font-bold text-xs uppercase tracking-widest text-slate-400 dark:text-brand-muted bg-slate-50/30 dark:bg-black/10 group-hover/row:bg-slate-50 dark:group-hover/row:bg-white/5">Thời gian xuất cảnh</td>
+                              <td className="p-5 text-base text-slate-700 dark:text-white font-medium group-hover/row:bg-slate-50 dark:group-hover/row:bg-white/5">{structBen.departure}</td>
+                            </tr>
+                          )}
                           <tr>
-                            <td className="w-1/3 p-4 font-bold text-slate-400 dark:text-brand-muted bg-slate-50/50 dark:bg-black/10">THỜI GIAN XUẤT CẢNH</td>
-                            <td className="p-4 text-slate-900 dark:text-white font-bold">{structBen?.departure || "—"}</td>
-                          </tr>
-                          <tr>
-                            <td className="p-4 font-bold text-slate-400 dark:text-brand-muted bg-slate-50/50 dark:bg-black/10 align-top">QUYỀN LỢI</td>
-                            <td className="p-4">
+                            <td className="w-1/3 p-5 font-bold text-xs uppercase tracking-widest text-slate-400 dark:text-brand-muted bg-slate-50/30 dark:bg-black/10">Quyền lợi</td>
+                            <td className="p-5">
+                              {structBen?.raw && (
+                                <p className="text-base text-slate-700 dark:text-gray-300 mb-4 whitespace-pre-line leading-relaxed">{structBen.raw}</p>
+                              )}
                               <div className="space-y-3">
                                 {structBen?.checklist?.map((item: string) => (
                                   <div key={item} className="flex items-center gap-2 text-slate-600 dark:text-gray-400">

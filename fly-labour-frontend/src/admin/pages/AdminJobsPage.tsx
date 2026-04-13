@@ -794,7 +794,7 @@ export default function AdminJobsPage() {
                   <FileText size={14} /> Mô tả công việc
                 </div>
                 <div className="space-y-1.5">
-                  <textarea value={form.description} onChange={setField("description")} className={`${inputClasses} h-40 py-3 resize-none`} placeholder="Mô tả các nhiệm vụ chính, môi trường làm việc..." />
+                  <textarea value={form.description} onChange={setField("description")} className={`${inputClasses} h-64 py-4 resize-none text-base leading-relaxed`} placeholder="Mô tả các nhiệm vụ chính, môi trường làm việc..." />
                 </div>
               </div>
             </div>
