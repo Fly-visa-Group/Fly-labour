@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Phone, Facebook, Link2, Check } from "lucide-react";
-import { useContentStore } from "@/core/hooks/usePageContent";
-import { useEditModeStore } from "@/core/store/editModeStore";
+import { useContentStore } from "@core/hooks/usePageContent";
+import { useEditModeStore } from "@core/store/editModeStore";
 
 export default function FloatingContact() {
   const [open, setOpen] = useState(false);

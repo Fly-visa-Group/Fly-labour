@@ -5,7 +5,7 @@
  * Copy pattern này cho các component khác.
  */
 
-import { useTheme } from "@/core/hooks/useTheme";
+import { useTheme } from "@core/hooks/useTheme";
 
 interface TemplateComponentProps {
   title: string;

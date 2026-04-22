@@ -1,6 +1,6 @@
 import { arrayMove } from '@dnd-kit/sortable'
-import { useEditModeStore } from '@/core/store/editModeStore'
-import { useContentStore } from '@/core/hooks/usePageContent'
+import { useEditModeStore } from '@core/store/editModeStore'
+import { useContentStore } from '@core/hooks/usePageContent'
 
 export interface SectionDef {
   id: string

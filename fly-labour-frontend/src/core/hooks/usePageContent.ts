@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { settingsApi } from '@/core/services/api'
+import { settingsApi } from '@core/services/api'
 
 // Store lưu content override từ DB
 interface ContentStore {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import ConfirmDeleteModal from "@/admin/components/ConfirmDeleteModal";
 import { Plus, Pencil, Trash2, X, CheckCircle, Loader2, Upload, Image as ImageIcon } from "lucide-react";
-import type { Category } from "@/core/types";
-import { categoriesApi, getImageUrl } from "@/core/services/api";
+import type { Category } from "@core/types";
+import { categoriesApi, getImageUrl } from "@core/services/api";
 import toast from "react-hot-toast";
 
 type FormData = {

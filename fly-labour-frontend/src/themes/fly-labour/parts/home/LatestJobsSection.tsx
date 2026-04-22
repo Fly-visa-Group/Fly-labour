@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import JobCard from "@/plugins/jobs/components/JobCard";
-import { jobsApi } from "@/core/services/api";
-import { useT } from "@/core/hooks/useT";
-import type { Job } from "@/core/types";
+import JobCard from "@features/jobs/components/JobCard";
+import { jobsApi } from "@core/services/api";
+import { useT } from "@core/hooks/useT";
+import type { Job } from "@core/types";
 
 export default function LatestJobsSection() {
   const [latestJobs, setLatestJobs] = useState<Job[]>([]);

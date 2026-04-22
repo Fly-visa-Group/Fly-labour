@@ -1,4 +1,4 @@
-import type { Job, Category, Application, News, DashboardStats } from '@/core/types'
+import type { Job, Category, Application, News, DashboardStats } from '@core/types'
 
 export const MOCK_CATEGORIES: Category[] = [
   { id: '1', name: 'Nông nghiệp', nameEn: 'Farm', icon: '🌾', description: 'Hái quả, trồng trọt, chăn nuôi', isActive: true, sortOrder: 1, _count: { jobs: 24 } },

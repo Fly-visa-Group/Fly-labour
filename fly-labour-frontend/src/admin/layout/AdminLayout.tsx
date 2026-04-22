@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { Bell, X, Menu } from "lucide-react";
 import AdminSidebar from "@/admin/layout/AdminSidebar";
-import { useAuthStore } from "@/core/store/authStore";
-import { applicationsApi } from "@/core/services/api";
-import { APP_STATUS_LABELS, formatDate } from "@/core/utils/helpers";
-import type { Application } from "@/core/types";
+import { useAuthStore } from "@core/store/authStore";
+import { applicationsApi } from "@core/services/api";
+import { APP_STATUS_LABELS, formatDate } from "@core/utils/helpers";
+import type { Application } from "@core/types";
 
 export default function AdminLayout() {
   const { isAuthenticated, user } = useAuthStore();

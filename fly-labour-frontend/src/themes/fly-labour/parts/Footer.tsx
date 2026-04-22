@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { useT } from "@/core/hooks/useT";
-import { usePageContent } from "@/core/hooks/usePageContent";
+import { useT } from "@core/hooks/useT";
+import { usePageContent } from "@core/hooks/usePageContent";
 import { useState, useEffect } from "react";
-import { settingsApi } from "@/core/services/api";
+import { settingsApi } from "@core/services/api";
 
 interface Policy {
   slug: string;

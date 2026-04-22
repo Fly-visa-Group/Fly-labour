@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar } from "lucide-react";
-import { newsApi, getImageUrl } from "@/core/services/api";
-import { useT } from "@/core/hooks/useT";
-import type { News } from "@/core/types";
-import { formatDate } from "@/core/utils/helpers";
+import { newsApi, getImageUrl } from "@core/services/api";
+import { useT } from "@core/hooks/useT";
+import type { News } from "@core/types";
+import { formatDate } from "@core/utils/helpers";
 
 const NEWS_EMOJIS = ["🇦🇺", "🇨🇦", "🇳🇿", "📰", "✈️"];
 

@@ -9,7 +9,7 @@ import {
   Play,
   Pause,
 } from "lucide-react";
-import { useT } from "@/core/hooks/useT";
+import { useT } from "@core/hooks/useT";
 
 const SLIDE_CONFIG = [
   {

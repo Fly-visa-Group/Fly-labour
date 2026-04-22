@@ -1,6 +1,6 @@
 import { ExternalLink, CheckCircle, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useT } from "@/core/hooks/useT";
+import { useT } from "@core/hooks/useT";
 
 const FEATURES = [
   "Đánh giá 4 kỹ năng: Nghe, Nói, Đọc, Viết",

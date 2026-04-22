@@ -13,9 +13,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { choresApi, usersApi } from "@/core/services/api";
-import { useChoreSocket } from "@/core/hooks/useChoreSocket";
-import type { Chore, ChoreStatus, User } from "@/core/types";
+import { choresApi, usersApi } from "@core/services/api";
+import { useChoreSocket } from "@core/hooks/useChoreSocket";
+import type { Chore, ChoreStatus, User } from "@core/types";
 
 function toYYYYMM(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;

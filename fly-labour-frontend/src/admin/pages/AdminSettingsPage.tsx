@@ -10,8 +10,8 @@ import {
   Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { settingsApi, usersApi } from "@/core/services/api";
-import { useAuthStore } from "@/core/store/authStore";
+import { settingsApi, usersApi } from "@core/services/api";
+import { useAuthStore } from "@core/store/authStore";
 
 export default function AdminSettingsPage() {
   const { user } = useAuthStore();

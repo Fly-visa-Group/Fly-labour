@@ -1,6 +1,6 @@
-import type { JobType, AppStatus } from '@/core/types'
-import { useLangStore } from '@/core/store/langStore'
-import { translations } from '@/core/i18n/translations'
+import type { JobType, AppStatus } from '@core/types'
+import { useLangStore } from '@core/store/langStore'
+import { translations } from '@core/i18n/translations'
 
 function getLang() {
   return useLangStore.getState().lang

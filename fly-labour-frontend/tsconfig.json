@@ -16,7 +16,12 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] },
+    "paths": { 
+      "@/*": ["./src/*"],
+      "@features/*": ["./src/features/*"],
+      "@core/*": ["./src/core/*"],
+      "@themes/*": ["./src/themes/*"]
+    },
     "ignoreDeprecations": "5.0"
   },
   "include": ["src"],

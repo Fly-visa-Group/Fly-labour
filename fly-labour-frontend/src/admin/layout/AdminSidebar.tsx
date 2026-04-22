@@ -16,7 +16,7 @@ import {
   Home,
   FileText,
 } from "lucide-react";
-import { useAuthStore } from "@/core/store/authStore";
+import { useAuthStore } from "@core/store/authStore";
 import toast from "react-hot-toast";
 
 const NAV = [

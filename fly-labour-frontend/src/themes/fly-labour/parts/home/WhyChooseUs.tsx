@@ -1,5 +1,5 @@
 import { Shield, Globe, Clock, HeartHandshake } from "lucide-react";
-import { useT } from "@/core/hooks/useT";
+import { useT } from "@core/hooks/useT";
 
 const FEATURE_ICONS = [
   <Shield size={24} />,

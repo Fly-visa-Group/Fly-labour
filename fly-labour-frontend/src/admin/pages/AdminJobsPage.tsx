@@ -18,15 +18,15 @@ import {
   TrendingUp,
   FileText,
 } from "lucide-react";
-import type { Category, Job } from "@/core/types";
+import type { Category, Job } from "@core/types";
 import {
   getCountryLabels,
   JOBTYPE_LABELS,
   formatSalary,
   formatDate,
-} from "@/core/utils/helpers";
+} from "@core/utils/helpers";
 import toast from "react-hot-toast";
-import { categoriesApi, jobsApi, getImageUrl } from "@/core/services/api";
+import { categoriesApi, jobsApi, getImageUrl } from "@core/services/api";
 
 const STATUS_COLORS = {
   active: "text-green-600 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-400/10 dark:border-green-400/20",

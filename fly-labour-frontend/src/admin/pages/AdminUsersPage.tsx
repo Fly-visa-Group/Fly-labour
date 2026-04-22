@@ -13,10 +13,10 @@ import {
   Building2,
   Loader2,
 } from "lucide-react";
-import { formatDate } from "@/core/utils/helpers";
+import { formatDate } from "@core/utils/helpers";
 import toast from "react-hot-toast";
-import type { User } from "@/core/types";
-import { usersApi } from "@/core/services/api";
+import type { User } from "@core/types";
+import { usersApi } from "@core/services/api";
 
 type EditForm = {
   fullName: string;

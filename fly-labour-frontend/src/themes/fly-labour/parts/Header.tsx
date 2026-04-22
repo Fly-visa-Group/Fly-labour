@@ -12,10 +12,10 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
-import { useAuthStore } from "@/core/store/authStore";
-import { useLangStore } from "@/core/store/langStore";
-import { useThemeStore } from "@/core/store/themeStore";
-import { useT } from "@/core/hooks/useT";
+import { useAuthStore } from "@core/store/authStore";
+import { useLangStore } from "@core/store/langStore";
+
+import { useT } from "@core/hooks/useT";
 import toast from "react-hot-toast";
 
 const LABOUR_COUNTRIES = [
@@ -47,7 +47,7 @@ export default function Header() {
   const { isAuthenticated, user, logout } = useAuthStore();
   const { toggle } = useLangStore();
   const { t, lang } = useT();
-  const { theme, toggle: toggleTheme } = useThemeStore();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -211,13 +211,7 @@ export default function Header() {
 
           {/* ── Right: Tools & Auth ── */}
           <div className="flex items-center gap-2">
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="hidden md:flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-gray-400 hover:border-amber-400 hover:text-amber-600 dark:hover:border-brand-gold dark:hover:text-brand-gold transition-colors bg-white dark:bg-brand-card shadow-sm"
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+
 
             {/* Language toggle */}
             <button
@@ -403,13 +397,8 @@ export default function Header() {
             <Phone size={15} className="fill-current" /> 0866-879-755
           </a>
 
-          {/* Theme / Language */}
+          {/* Language */}
           <div className="flex items-center px-5 py-3.5 border-b border-slate-100 dark:border-white/5 gap-4">
-            <button onClick={toggleTheme} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-brand-gold">
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-              {lang === "vi" ? (theme === "dark" ? "Sáng" : "Tối") : (theme === "dark" ? "Light" : "Dark")}
-            </button>
-            <div className="w-px h-4 bg-slate-200 dark:bg-white/10" />
             <button onClick={toggle} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-brand-gold">
               <span>{lang === "vi" ? "🇻🇳" : "🇺🇸"}</span>
               {lang === "vi" ? "English" : "Tiếng Việt"}

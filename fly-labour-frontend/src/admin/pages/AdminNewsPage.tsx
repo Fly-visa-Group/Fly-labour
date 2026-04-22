@@ -15,10 +15,10 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 
-import type { News } from "@/core/types";
-import { formatDate } from "@/core/utils/helpers";
+import type { News } from "@core/types";
+import { formatDate } from "@core/utils/helpers";
 import toast from "react-hot-toast";
-import { newsApi, getImageUrl } from "@/core/services/api";
+import { newsApi, getImageUrl } from "@core/services/api";
 
 function slugify(str: string) {
   return str
@@ -413,8 +413,9 @@ export default function AdminNewsPage() {
                 {/* Main Content Editor */}
                 <textarea
                   value={form.content}
+                  onChange={setField("content")}
                   placeholder="Bắt đầu câu chuyện của bạn..."
-                  className="!border-none !rounded-none min-h-[1000px]"
+                  className="!border-none !rounded-none w-full min-h-[1000px] outline-none text-slate-800 dark:text-slate-200 bg-transparent"
                 />
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { CheckCircle, ArrowRight, Briefcase, LogIn } from "lucide-react";
-import { useT } from "@/core/hooks/useT";
+import { useT } from "@core/hooks/useT";
 
 export default function EmployerCTASection() {
   const { t } = useT();

@@ -6,7 +6,12 @@ import process from 'process'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: { '@': path.resolve(__dirname, './src') },
+    alias: { 
+      '@': path.resolve(__dirname, './src'),
+      '@features': path.resolve(__dirname, './src/features'),
+      '@core': path.resolve(__dirname, './src/core'),
+      '@themes': path.resolve(__dirname, './src/themes')
+    },
   },
   server: {
     port: 5173,

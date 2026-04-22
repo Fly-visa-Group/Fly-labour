@@ -12,8 +12,8 @@ import {
   Inbox,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { contactApi } from "@/core/services/api";
-import { formatDate } from "@/core/utils/helpers";
+import { contactApi } from "@core/services/api";
+import { formatDate } from "@core/utils/helpers";
 
 interface Contact {
   id: string;

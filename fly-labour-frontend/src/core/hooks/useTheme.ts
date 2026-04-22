@@ -1,4 +1,4 @@
-import { useThemeStore } from '@/core/store/themeStore'
+import { useThemeStore } from '@core/store/themeStore'
 
 /**
  * Hook để access theme state dễ dàng

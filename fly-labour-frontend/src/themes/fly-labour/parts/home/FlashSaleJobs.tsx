@@ -5,10 +5,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { useQuery } from "@tanstack/react-query";
-import JobCard from "@/plugins/jobs/components/JobCard";
-import { jobsApi } from "@/core/services/api";
-import { useT } from "@/core/hooks/useT";
-import type { Job } from "@/core/types";
+import JobCard from "@features/jobs/components/JobCard";
+import { jobsApi } from "@core/services/api";
+import { useT } from "@core/hooks/useT";
+import type { Job } from "@core/types";
 
 // @ts-ignore
 import "swiper/swiper-bundle.css";

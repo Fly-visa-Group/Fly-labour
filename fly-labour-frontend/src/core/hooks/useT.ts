@@ -1,5 +1,5 @@
-import { useLangStore } from '@/core/store/langStore'
-import { translations } from '@/core/i18n/translations'
+import { useLangStore } from '@core/store/langStore'
+import { translations } from '@core/i18n/translations'
 
 export function useT() {
   const lang = useLangStore(s => s.lang)

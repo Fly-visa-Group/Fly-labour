@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { categoriesApi, getImageUrl } from "@/core/services/api";
-import { useT } from "@/core/hooks/useT";
-import type { Category } from "@/core/types";
+import { categoriesApi, getImageUrl } from "@core/services/api";
+import { useT } from "@core/hooks/useT";
+import type { Category } from "@core/types";
 
 export default function CategoriesSection() {
   const [cats, setCats] = useState<Category[]>([]);

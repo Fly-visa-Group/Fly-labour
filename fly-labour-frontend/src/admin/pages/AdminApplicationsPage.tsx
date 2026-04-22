@@ -8,10 +8,10 @@ import {
   Briefcase,
   FileText,
 } from "lucide-react";
-import type { Application, AppStatus } from "@/core/types";
-import { APP_STATUS_LABELS, formatDate } from "@/core/utils/helpers";
+import type { Application, AppStatus } from "@core/types";
+import { APP_STATUS_LABELS, formatDate } from "@core/utils/helpers";
 import toast from "react-hot-toast";
-import { applicationsApi } from "@/core/services/api";
+import { applicationsApi } from "@core/services/api";
 
 const STATUS_OPTIONS: AppStatus[] = [
   "pending",

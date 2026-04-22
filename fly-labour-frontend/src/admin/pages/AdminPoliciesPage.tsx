@@ -13,7 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { settingsApi } from "@/core/services/api";
+import { settingsApi } from "@core/services/api";
 
 interface Policy {
   slug: string;

@@ -13,10 +13,10 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Users, Briefcase, ClipboardList, Eye, TrendingUp } from "lucide-react";
-import { jobsApi, applicationsApi, usersApi } from "@/core/services/api";
-import { APP_STATUS_LABELS, formatDate } from "@/core/utils/helpers";
-import { useThemeStore } from "@/core/store/themeStore";
-import type { Application } from "@/core/types";
+import { jobsApi, applicationsApi, usersApi } from "@core/services/api";
+import { APP_STATUS_LABELS, formatDate } from "@core/utils/helpers";
+import { useThemeStore } from "@core/store/themeStore";
+import type { Application } from "@core/types";
 
 const PIE_COLORS = ["#fdd52f", "#3B82F6", "#10B981", "#EF4444", "#8B5CF6"];
 const MONTHLY_DATA = [

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useT } from "@/core/hooks/useT";
+import { useT } from "@core/hooks/useT";
 
 export default function CtaSection() {
   const { t } = useT();
