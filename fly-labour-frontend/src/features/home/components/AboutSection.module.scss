@@ -93,26 +93,57 @@
   color: #64748b;
 }
 
-/* Video */
-.videoWrapper {
-  max-width: 800px;
-  margin: 0 auto 3rem;
+/* Video Grid & Cards */
+.videoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .videoGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.videoCard {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.videoCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #f59e0b;
 }
 
 .videoThumbnail {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
-  border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
-  background: #f1f5f9;
+  background: #000;
 }
 
 .videoImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0.85;
+  transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.videoCard:hover .videoImage {
+  opacity: 1;
+  transform: scale(1.05);
 }
 
 .playButton {
@@ -120,18 +151,49 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 4rem;
-  height: 4rem;
-  background: rgba(0, 0, 0, 0.6);
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(217, 119, 6, 0.9); // Premium amber amber-600
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s ease;
+  color: white;
+  transition: background 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
 }
 
-.videoThumbnail:hover .playButton {
-  background: rgba(0, 0, 0, 0.8);
+.videoCard:hover .playButton {
+  background: #b45309; // amber-700
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.videoInfo {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: linear-gradient(to bottom, #ffffff, #fafaf9);
+}
+
+.videoTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.videoCard:hover .videoTitle {
+  color: #d97706; // amber-600
+}
+
+.videoDesc {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.6;
+  flex-grow: 1;
 }
 
 /* Gallery */

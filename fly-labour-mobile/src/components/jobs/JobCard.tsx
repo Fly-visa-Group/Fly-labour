@@ -1,10 +1,30 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { useRouter } from 'expo-router'
-import { MapPin, Clock, Users } from 'lucide-react-native'
+import { MapPin, Clock, Users, Wheat, Sparkles, Wrench, HardHat, UtensilsCrossed, Monitor, HeartPulse, GraduationCap, Car, Factory, ShoppingBag, Briefcase } from 'lucide-react-native'
 import { Colors, BrandColors } from '@/constants/colors'
 import { Badge } from '@/components/ui/Badge'
 import { formatSalary, getCountryLabel, JOBTYPE_LABELS, getImageUrl, timeAgo } from '@/utils/helpers'
 import type { Job } from '@/types'
+
+// Mapping category names to lucide icons
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+  farm: Wheat,
+  agriculture: Wheat,
+  nail: Sparkles,
+  spa: Sparkles,
+  beauty: Sparkles,
+  engineering: Wrench,
+  construction: HardHat,
+  restaurant: UtensilsCrossed,
+  it: Monitor,
+  technology: Monitor,
+  healthcare: HeartPulse,
+  education: GraduationCap,
+  driving: Car,
+  manufacturing: Factory,
+  retail: ShoppingBag,
+  general: Briefcase,
+}
 
 interface Props {
   job: Job
@@ -27,14 +47,18 @@ export function JobCard({ job, compact }: Props) {
             <Image source={{ uri: getImageUrl(job.image) }} style={styles.image} resizeMode="cover" />
           ) : (
             <View style={[styles.image, styles.imagePlaceholder]}>
-              <Text style={styles.imageEmoji}>{job.category?.icon || '💼'}</Text>
+              {(() => {
+                const categoryKey = (job.category?.nameEn || job.category?.name || '').toLowerCase()
+                const IconComponent = CATEGORY_ICONS[categoryKey] || CATEGORY_ICONS[job.category?.icon?.toLowerCase() || ''] || Briefcase
+                return <IconComponent size={24} color={Colors.muted} />
+              })()}
             </View>
           )}
         </View>
         <View style={styles.titleBlock}>
           <View style={styles.badges}>
-            {job.isHot && <Badge label="🔥 Hot" color={Colors.orange} size="sm" />}
-            {job.isFeatured && <Badge label="⭐ Nổi bật" color={Colors.yellow} size="sm" />}
+            {job.isHot && <Badge label="Hot" color={Colors.orange} size="sm" />}
+            {job.isFeatured && <Badge label="Nổi bật" color={Colors.yellow} size="sm" />}
           </View>
           <Text style={styles.title} numberOfLines={2}>{job.title}</Text>
           {job.company && <Text style={styles.company} numberOfLines={1}>{job.company}</Text>}
@@ -87,7 +111,6 @@ const styles = StyleSheet.create({
   imageWrap: { flexShrink: 0 },
   image: { width: 56, height: 56, borderRadius: 12 },
   imagePlaceholder: { backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center' },
-  imageEmoji: { fontSize: 24 },
   titleBlock: { flex: 1, gap: 4 },
   badges: { flexDirection: 'row', gap: 4, flexWrap: 'wrap' },
   title: { color: Colors.text, fontSize: 14, fontWeight: '600', lineHeight: 20 },

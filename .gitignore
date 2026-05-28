@@ -32,5 +32,7 @@ AUX
 scratch/
 _class-tokens.json
 
-# Large video file
+# Large video files
 fly-labour-frontend/public/FLY VISA.mp4
+fly-labour-frontend/public/fly-visa-2.mp4
+fly-labour-frontend/public/fly-visa-3.mp4

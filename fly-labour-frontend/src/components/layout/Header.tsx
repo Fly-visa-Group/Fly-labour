@@ -16,20 +16,21 @@ import { useLangStore } from "@core/store/langStore";
 import CountryFlag from "@components/widgets/CountryFlag";
 
 import { useT } from "@core/hooks/useT";
+import { translations } from "@core/i18n/translations";
 import toast from "react-hot-toast";
 import s from "./Header.module.scss";
 
-const LABOUR_COUNTRIES = [
-  { label: "🇦🇺 Úc", value: "australia" },
-  { label: "🇨🇦 Canada", value: "canada" },
-  { label: "🇳🇿 New Zealand", value: "new_zealand" },
-  { label: "🇯🇵 Nhật Bản", value: "japan" },
-  { label: "🇩🇪 Đức", value: "germany" },
-  { label: "🇰🇷 Hàn Quốc", value: "south_korea" },
-  { label: "🇸🇬 Singapore", value: "singapore" },
-  { label: "🇹🇼 Đài Loan", value: "taiwan" },
-  { label: "🇳🇴 Na Uy", value: "norway" },
-  { label: "🇵🇹 Bồ Đào Nha", value: "portugal" },
+const COUNTRY_VALUES = [
+  "australia",
+  "canada",
+  "new_zealand",
+  "japan",
+  "germany",
+  "south_korea",
+  "singapore",
+  "taiwan",
+  "norway",
+  "portugal",
 ];
 
 export default function Header() {
@@ -50,11 +51,17 @@ export default function Header() {
   const [mobileSelectedCountry, setMobileSelectedCountry] = useState<string | null>(null);
 
   const { isAuthenticated, user, logout } = useAuthStore();
-  const { toggle } = useLangStore();
-  const { t, lang } = useT();
+  const { toggle, lang } = useLangStore();
+  const { t } = useT();
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Get country label from translations
+  const getCountryLabel = (countryValue: string) => {
+    const countryMap = translations[lang].countryMap as Record<string, string>;
+    return countryMap[countryValue] || countryValue;
+  };
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);
@@ -100,7 +107,7 @@ export default function Header() {
           {/* ── Desktop Nav ── */}
           <nav className={s.navDesktop}>
             <Link to="/" className={navLinkClass("/")}>
-              {lang === "vi" ? "Trang chủ" : "Home"}
+              {t("nav.home")}
             </Link>
 
             {/* Du học dropdown */}
@@ -116,39 +123,39 @@ export default function Header() {
                       {lang === "vi" ? "Chọn quốc gia" : "Select Country"}
                     </p>
                     <div className={cx(s.dropdownList, s.dropdownListVisible)}>
-                      {LABOUR_COUNTRIES.map((c) => {
-                        const name = c.label.split(" ").slice(1).join(" ");
+                      {COUNTRY_VALUES.map((c) => {
+                        const label = getCountryLabel(c);
                         return (
                           <div
-                            key={c.value}
+                            key={c}
                             className={s.dropdownItemWrap}
-                            onMouseEnter={() => setHoveredCountry(c.value)}
+                            onMouseEnter={() => setHoveredCountry(c)}
                             onMouseLeave={() => setHoveredCountry(null)}
                           >
                             <div className={s.dropdownItemHeader}>
-                              <CountryFlag country={c.value} className={s.dropdownFlag} />
-                              <span className={s.dropdownItemText}>{name}</span>
+                              <CountryFlag country={c} className={s.dropdownFlag} />
+                              <span className={s.dropdownItemText}>{label}</span>
                               <ChevronRight size={13} className={s.itemChevron} />
                             </div>
 
-                            {hoveredCountry === c.value && (
+                            {hoveredCountry === c && (
                               <div className={s.submenuPanel}>
                                 <Link
-                                  to={`/study?country=${c.value}&studyType=university`}
+                                  to={`/study?country=${c}&studyType=university`}
                                   className={s.submenuItem}
                                   onClick={() => setStudyOpen(false)}
                                 >
                                   🎓 {lang === "vi" ? "Đại học" : "University"}
                                 </Link>
                                 <Link
-                                  to={`/study?country=${c.value}&studyType=college`}
+                                  to={`/study?country=${c}&studyType=college`}
                                   className={s.submenuItem}
                                   onClick={() => setStudyOpen(false)}
                                 >
                                   🏫 {lang === "vi" ? "Cao đẳng" : "College"}
                                 </Link>
                                 <Link
-                                  to={`/study?country=${c.value}&studyType=vocational`}
+                                  to={`/study?country=${c}&studyType=vocational`}
                                   className={s.submenuItem}
                                   onClick={() => setStudyOpen(false)}
                                 >
@@ -156,7 +163,7 @@ export default function Header() {
                                 </Link>
                                 <div className={s.submenuDivider} />
                                 <Link
-                                  to={`/study?country=${c.value}`}
+                                  to={`/study?country=${c}`}
                                   className={cx(s.submenuItem, s.submenuItemAll)}
                                   onClick={() => setStudyOpen(false)}
                                 >
@@ -191,10 +198,10 @@ export default function Header() {
                       {lang === "vi" ? "Chọn quốc gia" : "Select Country"}
                     </p>
                     <div className={s.dropdownList}>
-                      {LABOUR_COUNTRIES.map((c) => (
-                        <Link key={c.value} to={`/travel?country=${c.value}`} className={s.dropdownItem} onClick={() => setTravelOpen(false)}>
-                          <CountryFlag country={c.value} />
-                          <span className={s.dropdownItemText}>{c.label.split(" ").slice(1).join(" ")}</span>
+                      {COUNTRY_VALUES.map((c) => (
+                        <Link key={c} to={`/travel?country=${c}`} className={s.dropdownItem} onClick={() => setTravelOpen(false)}>
+                          <CountryFlag country={c} />
+                          <span className={s.dropdownItemText}>{getCountryLabel(c)}</span>
                         </Link>
                       ))}
                     </div>
@@ -221,10 +228,10 @@ export default function Header() {
                       {lang === "vi" ? "Chọn quốc gia" : "Select Country"}
                     </p>
                     <div className={s.dropdownList}>
-                      {LABOUR_COUNTRIES.map((c) => (
-                        <Link key={c.value} to={`/jobs?country=${c.value}`} className={s.dropdownItem} onClick={() => setLabourOpen(false)}>
-                          <CountryFlag country={c.value} />
-                          <span className={s.dropdownItemText}>{c.label.split(" ").slice(1).join(" ")}</span>
+                      {COUNTRY_VALUES.map((c) => (
+                        <Link key={c} to={`/jobs?country=${c}`} className={s.dropdownItem} onClick={() => setLabourOpen(false)}>
+                          <CountryFlag country={c} />
+                          <span className={s.dropdownItemText}>{getCountryLabel(c)}</span>
                         </Link>
                       ))}
                     </div>
@@ -242,13 +249,13 @@ export default function Header() {
               {lang === "vi" ? "Cẩm nang" : "Guide"}
             </Link>
             <Link to="/about" className={navLinkClass("/about")}>
-              {lang === "vi" ? "Về chúng tôi" : "About Us"}
+              {t("nav.about")}
             </Link>
             <Link to="/news" className={navLinkClass("/news")}>
-              {lang === "vi" ? "Tin tức" : "News"}
+              {t("nav.news")}
             </Link>
             <Link to="/contact" className={navLinkClass("/contact")}>
-              {lang === "vi" ? "Liên hệ" : "Contact"}
+              {t("nav.contact")}
             </Link>
 
             {/* Phone */}
@@ -315,7 +322,7 @@ export default function Header() {
               </div>
             ) : (
               <Link to="/login" className={cx("btn-primary", s.signInDesktop, s.signInSizing)}>
-                {lang === "vi" ? "Đăng nhập" : "Sign In"}
+                {t("nav.signIn")}
               </Link>
             )}
 
@@ -337,7 +344,7 @@ export default function Header() {
 
           {/* Trang chủ */}
           <Link to="/" className={s.mobileLink}>
-            {lang === "vi" ? "Trang chủ" : "Home"}
+            {t("nav.home")}
           </Link>
 
           {/* Du học accordion */}
@@ -352,44 +359,44 @@ export default function Header() {
             {mobileStudy && (
               <div className={s.mobileAccordionBody}>
                 <div className={s.mobileCountryList}>
-                  {LABOUR_COUNTRIES.map((c) => {
-                    const isExpanded = mobileSelectedCountry === c.value;
+                  {COUNTRY_VALUES.map((c) => {
+                    const isExpanded = mobileSelectedCountry === c;
                     return (
-                      <div key={c.value} className={s.mobileCountryGroup}>
+                      <div key={c} className={s.mobileCountryGroup}>
                         <button
                           type="button"
                           className={cx(s.mobileGridCell, isExpanded && s.mobileGridCellActive)}
-                          onClick={() => setMobileSelectedCountry(isExpanded ? null : c.value)}
+                          onClick={() => setMobileSelectedCountry(isExpanded ? null : c)}
                         >
-                          <span className={s.mobileFlag}><CountryFlag country={c.value} /></span>
-                          <span className={s.mobileGridMeta}>{c.label.split(" ").slice(1).join(" ")}</span>
+                          <span className={s.mobileFlag}><CountryFlag country={c} /></span>
+                          <span className={s.mobileGridMeta}>{getCountryLabel(c)}</span>
                           <ChevronDown size={14} className={cx(s.chevronMuted, s.chevron, isExpanded && s.chevronOpen)} style={{ marginLeft: "auto" }} />
                         </button>
                         {isExpanded && (
                           <div className={s.mobileSubmenu}>
                             <Link
-                              to={`/study?country=${c.value}&studyType=university`}
+                              to={`/study?country=${c}&studyType=university`}
                               className={s.mobileSubItem}
                               onClick={() => { setMobileOpen(false); setMobileSelectedCountry(null); }}
                             >
                               🎓 {lang === "vi" ? "Đại học" : "University"}
                             </Link>
                             <Link
-                              to={`/study?country=${c.value}&studyType=college`}
+                              to={`/study?country=${c}&studyType=college`}
                               className={s.mobileSubItem}
                               onClick={() => { setMobileOpen(false); setMobileSelectedCountry(null); }}
                             >
                               🏫 {lang === "vi" ? "Cao đẳng" : "College"}
                             </Link>
                             <Link
-                              to={`/study?country=${c.value}&studyType=vocational`}
+                              to={`/study?country=${c}&studyType=vocational`}
                               className={s.mobileSubItem}
                               onClick={() => { setMobileOpen(false); setMobileSelectedCountry(null); }}
                             >
                               💼 {lang === "vi" ? "Du học nghề" : "Vocational"}
                             </Link>
                             <Link
-                              to={`/study?country=${c.value}`}
+                              to={`/study?country=${c}`}
                               className={cx(s.mobileSubItem, s.mobileSubItemAll)}
                               onClick={() => { setMobileOpen(false); setMobileSelectedCountry(null); }}
                             >
@@ -402,7 +409,7 @@ export default function Header() {
                   })}
                 </div>
                 <Link to="/study" className={s.mobileViewAll} onClick={() => { setMobileOpen(false); setMobileSelectedCountry(null); }}>
-                  {lang === "vi" ? "Xem tất cả du học →" : "View All →"}
+                  {lang === "vi" ? "Xem tất cả du học →" : "View All Study Programs →"}
                 </Link>
               </div>
             )}
@@ -420,15 +427,15 @@ export default function Header() {
             {mobileTravel && (
               <div className={s.mobileAccordionBody}>
                 <div className={s.mobileGridLinks}>
-                  {LABOUR_COUNTRIES.map((c) => (
+                  {COUNTRY_VALUES.map((c) => (
                     <Link
-                      key={c.value}
-                      to={`/travel?country=${c.value}`}
+                      key={c}
+                      to={`/travel?country=${c}`}
                       className={s.mobileGridCell}
                       onClick={() => setMobileOpen(false)}
                     >
-                      <CountryFlag country={c.value} />
-                      <span className={s.mobileGridMeta}>{c.label.split(" ").slice(1).join(" ")}</span>
+                      <CountryFlag country={c} />
+                      <span className={s.mobileGridMeta}>{getCountryLabel(c)}</span>
                     </Link>
                   ))}
                 </div>
@@ -451,15 +458,15 @@ export default function Header() {
             {mobileLabour && (
               <div className={s.mobileAccordionBody}>
                 <div className={s.mobileGridLinks}>
-                  {LABOUR_COUNTRIES.map((c) => (
+                  {COUNTRY_VALUES.map((c) => (
                     <Link
-                      key={c.value}
-                      to={`/jobs?country=${c.value}`}
+                      key={c}
+                      to={`/jobs?country=${c}`}
                       className={s.mobileGridCell}
                       onClick={() => setMobileOpen(false)}
                     >
-                      <CountryFlag country={c.value} />
-                      <span className={s.mobileGridMeta}>{c.label.split(" ").slice(1).join(" ")}</span>
+                      <CountryFlag country={c} />
+                      <span className={s.mobileGridMeta}>{getCountryLabel(c)}</span>
                     </Link>
                   ))}
                 </div>
@@ -474,13 +481,13 @@ export default function Header() {
             {lang === "vi" ? "Cẩm nang" : "Guide"}
           </Link>
           <Link to="/about" className={s.mobileLink}>
-            {lang === "vi" ? "Về chúng tôi" : "About Us"}
+            {t("nav.about")}
           </Link>
           <Link to="/news" className={s.mobileLink}>
-            {lang === "vi" ? "Tin tức" : "News"}
+            {t("nav.news")}
           </Link>
           <Link to="/contact" className={s.mobileLink}>
-            {lang === "vi" ? "Liên hệ" : "Contact"}
+            {t("nav.contact")}
           </Link>
 
           {/* Phone */}
@@ -500,7 +507,7 @@ export default function Header() {
           {!isAuthenticated ? (
             <div className={s.mobileAuthBlock}>
               <Link to="/login" className={cx("btn-primary", s.mobileSignIn)} onClick={() => setMobileOpen(false)}>
-                {lang === "vi" ? "Đăng nhập" : "Sign In"}
+                {t("nav.signIn")}
               </Link>
             </div>
           ) : (

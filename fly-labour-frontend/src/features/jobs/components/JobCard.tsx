@@ -8,6 +8,20 @@ import {
   TimerOff,
   Home,
   Globe,
+  Star,
+  Wheat,
+  Sparkles,
+  Wrench,
+  HardHat,
+  UtensilsCrossed,
+  Monitor,
+  HeartPulse,
+  GraduationCap,
+  Car,
+  Factory,
+  ShoppingBag,
+  Briefcase,
+  type LucideIcon,
 } from "lucide-react";
 import type { Job } from "@core/types";
 import {
@@ -21,6 +35,38 @@ import { getImageUrl } from "@core/services/api";
 import CountryFlag from "@components/widgets/CountryFlag";
 import clsx from "clsx";
 import s from "./JobCard.module.scss";
+
+// Mapping category names/icons to lucide icons
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  farm: Wheat,
+  agriculture: Wheat,
+  "nông nghiệp": Wheat,
+  nail: Sparkles,
+  spa: Sparkles,
+  beauty: Sparkles,
+  "làm đẹp": Sparkles,
+  engineering: Wrench,
+  "kỹ thuật": Wrench,
+  construction: HardHat,
+  "xây dựng": HardHat,
+  restaurant: UtensilsCrossed,
+  "nhà hàng": UtensilsCrossed,
+  "f&b": UtensilsCrossed,
+  it: Monitor,
+  technology: Monitor,
+  healthcare: HeartPulse,
+  "y tế": HeartPulse,
+  education: GraduationCap,
+  "giáo dục": GraduationCap,
+  driving: Car,
+  "lái xe": Car,
+  manufacturing: Factory,
+  "sản xuất": Factory,
+  retail: ShoppingBag,
+  "bán lẻ": ShoppingBag,
+  general: Briefcase,
+  "tổng hợp": Briefcase,
+};
 
 const COUNTRY_IMAGES: Record<string, string> = {
   australia:
@@ -66,6 +112,9 @@ export default function JobCard({ job, compact }: Props) {
     CATEGORY_IMAGES[job.categoryId || ""] ||
     COUNTRY_IMAGES[job.country];
 
+  // Get localized content
+  const jobTitle = lang === "en" ? (job.titleEn || job.title) : job.title;
+
   return (
     <Link
       to={`/jobs/${job.id}`}
@@ -98,7 +147,9 @@ export default function JobCard({ job, compact }: Props) {
               </span>
             )}
             {!expired && job.isFeatured && (
-              <span className={s.badgeFeatured}>{jc.featured}</span>
+              <span className={s.badgeFeatured}>
+                <Star size={9} /> {jc.featured}
+              </span>
             )}
             {job.labourType && (
               <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full ${
@@ -159,7 +210,7 @@ export default function JobCard({ job, compact }: Props) {
           </div>
         )}
 
-        <h3 className={s.title}>{job.title}</h3>
+        <h3 className={s.title}>{jobTitle}</h3>
 
         {job.company && <p className={s.company}>{job.company}</p>}
 
@@ -190,21 +241,23 @@ export default function JobCard({ job, compact }: Props) {
         <div className={s.footer}>
           {job.category ? (
             <span className={s.categoryTag}>
-              {job.category.icon?.startsWith("http") ||
-              job.category.icon?.startsWith("/") ||
-              job.category.icon?.match(/^\d+$/) ? (
-                <img
-                  src={
-                    job.category.icon?.match(/^\d+$/)
-                      ? `/${job.category.icon}.png`
-                      : getImageUrl(job.category.icon)
-                  }
-                  alt=""
-                  className={s.categoryIcon}
-                />
-              ) : (
-                job.category.icon
-              )}
+              {(() => {
+                const categoryKey = (
+                  job.category.nameEn ||
+                  job.category.name ||
+                  ""
+                ).toLowerCase();
+                const IconComponent =
+                  CATEGORY_ICONS[categoryKey] ||
+                  CATEGORY_ICONS[job.category.icon?.toLowerCase() || ""] ||
+                  Briefcase;
+                return (
+                  <IconComponent
+                    size={14}
+                    className={s.categoryIcon}
+                  />
+                );
+              })()}
               {lang === "en"
                 ? job.category.nameEn || job.category.name
                 : job.category.name}

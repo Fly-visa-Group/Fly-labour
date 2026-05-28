@@ -57,7 +57,7 @@ export default function JobDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
-  const { t } = useT();
+  const { t, lang } = useT();
   const d = t("jobDetail");
 
   const [job, setJob] = useState<Job | null>(null);
@@ -87,8 +87,10 @@ export default function JobDetailPage() {
     jobsApi
       .getOne(id)
       .then((r) => {
-        setJob(r.data);
-        document.title = `${r.data.title} — Fly Labour`;
+        const jobData = r.data;
+        setJob(jobData);
+        const title = lang === "en" ? (jobData.titleEn || jobData.title) : jobData.title;
+        document.title = `${title} — Fly Labour`;
         jobsApi
           .getAll({ country: r.data.country, limit: 3 })
           .then((res) =>
@@ -101,7 +103,7 @@ export default function JobDetailPage() {
     return () => {
       document.title = "Fly Labour — Việc làm nước ngoài";
     };
-  }, [id]);
+  }, [id, lang]);
 
   useEffect(() => {
     if (user) {
@@ -199,6 +201,12 @@ export default function JobDetailPage() {
   const eduOptions: string[] = d.eduOptions;
   const engOptions: string[] = d.engOptions;
 
+  // Get localized content
+  const jobTitle = lang === "en" ? (job.titleEn || job.title) : job.title;
+  const jobDescription = lang === "en" ? (job.descriptionEn || job.description) : job.description;
+  const jobRequirements = lang === "en" ? (job.requirementsEn || job.requirements) : job.requirements;
+  const jobBenefits = lang === "en" ? (job.benefitsEn || job.benefits) : job.benefits;
+
   // CSS đồng bộ UI
   const cardClasses = s.card;
 
@@ -231,7 +239,7 @@ export default function JobDetailPage() {
           </Link>
           <span>/</span>
           <span className={s.breadcrumbCurrent}>
-            {job.title}
+            {jobTitle}
           </span>
         </div>
       </div>
@@ -313,7 +321,7 @@ export default function JobDetailPage() {
                 </div>
 
                 <h1 className="text-2xl md:text-3xl font-bold text-slate-900  mb-3">
-                  {job.title}
+                  {jobTitle}
                 </h1>
                 {job.company && (
                   <div className="flex items-center gap-2 text-slate-800  text-base font-semibold mb-6">
@@ -376,7 +384,7 @@ export default function JobDetailPage() {
                 </div>
               )}
               <p className={`${bodyTextClasses} whitespace-pre-line`}>
-                {job.description}
+                {jobDescription}
               </p>
             </div>
 
@@ -385,10 +393,10 @@ export default function JobDetailPage() {
               let structReq: any = null;
               let structBen: any = null;
               try {
-                if (job.requirements?.startsWith('{"v2":'))
-                  structReq = JSON.parse(job.requirements).v2;
-                if (job.benefits?.startsWith('{"v2":'))
-                  structBen = JSON.parse(job.benefits).v2;
+                if (jobRequirements?.startsWith('{"v2":'))
+                  structReq = JSON.parse(jobRequirements).v2;
+                if (jobBenefits?.startsWith('{"v2":'))
+                  structBen = JSON.parse(jobBenefits).v2;
               } catch {}
 
               return (
@@ -452,12 +460,12 @@ export default function JobDetailPage() {
                               ) : (
                                 <span className="text-sm text-slate-400 ">—</span>
                               )}
-                              {!structReq && job.requirements &&
-                                !job.requirements.startsWith('{"v2":') && (
+                              {!structReq && jobRequirements &&
+                                !jobRequirements.startsWith('{"v2":') && (
                                   <p
                                     className={`${bodyTextClasses} whitespace-pre-line`}
                                   >
-                                    {job.requirements}
+                                    {jobRequirements}
                                   </p>
                                 )}
                             </td>
@@ -545,10 +553,10 @@ export default function JobDetailPage() {
                                   </div>
                                 ))}
                                 {(!structBen || !structBen.checklist?.length) &&
-                                  job.benefits &&
-                                  !job.benefits.startsWith('{"v2":') && (
+                                  jobBenefits &&
+                                  !jobBenefits.startsWith('{"v2":') && (
                                     <p className="text-sm font-medium text-slate-900  leading-relaxed whitespace-pre-line">
-                                      {job.benefits}
+                                      {jobBenefits}
                                     </p>
                                   )}
                               </div>
@@ -876,14 +884,16 @@ export default function JobDetailPage() {
                   {d.related}
                 </h3>
                 <div className={s.relatedList}>
-                  {relatedJobs.map((rj) => (
+                  {relatedJobs.map((rj) => {
+                    const relatedTitle = lang === "en" ? (rj.titleEn || rj.title) : rj.title;
+                    return (
                     <Link
                       key={rj.id}
                       to={`/jobs/${rj.id}`}
                       className={s.relatedItem}
                     >
                       <p className={s.relatedTitle}>
-                        {rj.title}
+                        {relatedTitle}
                       </p>
                       <p className={s.relatedCompany}>
                         {rj.company}
@@ -896,7 +906,8 @@ export default function JobDetailPage() {
                         )}
                       </p>
                     </Link>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
